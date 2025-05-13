@@ -90,18 +90,33 @@
     <button onclick="goToFilters()">Kriterien festlegen</button>
   </section>
     <!-- Screen 3: Kriterien -->
-  <section id="screen3" class="hidden">
-    <h1>Wähle deine Kriterien</h1>
-    <div class="box" style="text-align: left;">
-      <label><input type="checkbox" id="filterHashtag"> Kommentar mit bestimmtem Hashtag</label><br><br>
-      <label><input type="checkbox" id="filterMention"> Markierte Freunde erforderlich</label><br><br>
-      <label><input type="checkbox" id="filterFollow"> Folgt dem Account</label><br><br>
-      <label>Anzahl Gewinner:
-        <input type="number" id="winnerCount" value="1" min="1" max="10" style="width: 60px;">
-      </label>
-    </div>
-    <button onclick="startDraw()">Auslosung starten</button>
-  </section>
+<section id="screen3" class="hidden">
+  <h1>Kriterien festlegen</h1>
+  <div class="box" style="text-align: left;">
+    <label>
+      <input type="checkbox" id="requireHashtag">
+      Kommentar enthält bestimmten Hashtag
+    </label>
+    <input type="text" id="hashtagInput" placeholder="#BohoGiveaway" style="margin-left: 10px;"><br><br>
+
+    <label>
+      <input type="checkbox" id="requireMention">
+      Teilnehmer hat Freunde markiert
+    </label>
+    <input type="number" id="mentionCount" value="1" min="1" style="width: 60px; margin-left: 10px;"> Freunde<br><br>
+
+    <label>
+      <input type="checkbox" id="requireFollow">
+      Teilnehmer folgt deinem Account
+    </label><br><br>
+
+    <label>
+      Anzahl Gewinner:
+      <input type="number" id="winnerCount" value="1" min="1" max="10" style="width: 60px;">
+    </label>
+  </div>
+  <button onclick="startDraw()">Auslosung starten</button>
+</section>
     <!-- Screen 4: Auslosung -->
   <section id="screen4" class="hidden">
     <h1>Ziehung läuft...</h1>
