@@ -140,7 +140,7 @@
       <button onclick="shareResult()">Ergebnis teilen</button>
     </div>
   </section>
-<script>
+  <script>
   const comments = [
     {
       user: "@sunlover",
@@ -162,13 +162,33 @@
     }
   ];
 
+  function showScreen(id) {
+    document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+  }
+
+  function goToPreview() {
+    const link = document.getElementById("linkInput").value;
+    if (!link) {
+      alert("Bitte Link eingeben");
+      return;
+    }
+    document.getElementById("previewImage").src = "https://via.placeholder.com/500x300.png?text=Post+Vorschau";
+    document.getElementById("likes").textContent = "Likes: 532";
+    document.getElementById("comments").textContent = `Kommentare: ${comments.length}`;
+    showScreen("screen2");
+  }
+
+  function goToFilters() {
+    showScreen("screen3");
+  }
+
   function startDraw() {
     showScreen("screen4");
     document.getElementById("successMessage").style.display = "none";
     document.getElementById("dreamcatcher").style.display = "block";
     const output = document.getElementById("drawly-result");
 
-    // Kriterien holen
     const requireHashtag = document.getElementById("requireHashtag").checked;
     const hashtag = document.getElementById("hashtagInput").value.trim().toLowerCase();
 
@@ -183,7 +203,6 @@
 
     const winnerCount = parseInt(document.getElementById("winnerCount").value, 10);
 
-    // Kommentare prüfen
     const valid = comments.filter(c => {
       const hasHashtag = !requireHashtag || (hashtag && c.text.toLowerCase().includes(hashtag));
       const hasMentions = !requireMention || c.mentions >= minMentions;
@@ -194,12 +213,11 @@
     });
 
     if (valid.length === 0) {
-      output.innerHTML = "<div style='color:#b84c4c; font-weight:500;'>Keine Teilnehmer erfüllen die Kriterien.</div>";
+      output.innerHTML = "<div style='color:#b84c4c;'>Keine Teilnehmer erfüllen die Kriterien.</div>";
       document.getElementById("dreamcatcher").style.display = "none";
       return;
     }
 
-    // Slot-Effekt
     let i = 0;
     const names = valid.map(c => c.user);
     const interval = setInterval(() => {
@@ -214,14 +232,41 @@
         const randIndex = Math.floor(Math.random() * names.length);
         winners.push(names.splice(randIndex, 1)[0]);
       }
-      output.innerHTML = `
-        <div style="background: #fffaf6; border: 1px solid #e6dcd5; border-radius: 12px; padding: 20px; margin-top: 20px;">
-          <h2 style="color:#a97c50; font-family:'Playfair Display', serif;">Gewinner</h2>
-          <p style="font-size: 1.4em;">${winners.join("<br>")}</p>
-        </div>`;
+      output.innerHTML = `<h2>Gewinner:</h2><p>${winners.join("<br>")}</p>`;
       document.getElementById("dreamcatcher").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
       launchConfetti();
     }, 3500);
   }
+
+  function shareResult() {
+    alert("Link zum Teilen kopiert!");
+  }
+
+  function launchConfetti() {
+    for (let i = 0; i < 25; i++) {
+      const c = document.createElement("div");
+      c.textContent = "🎉";
+      c.style.position = "fixed";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.top = "-10px";
+      c.style.fontSize = "24px";
+      c.style.animation = `fall ${2 + Math.random()}s linear forwards`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
+</body>
+</html>
