@@ -10,21 +10,76 @@
       margin: 0;
       padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #fdf6f0, #f7ede2);
+      background: #fdf6f0;
       color: #5b3e31;
       text-align: center;
-      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob1 {
+      background: #fae1dd;
+      width: 300px;
+      height: 300px;
+      top: -50px;
+      left: -50px;
+    }
+
+    .blob2 {
+      background: #f8edeb;
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      right: -80px;
+      animation-delay: 5s;
+    }
+
+    .blob3 {
+      background: #d8cfc4;
+      width: 250px;
+      height: 250px;
+      top: 200px;
+      right: 30%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+
+    .container {
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      overflow-x: hidden;
+      padding: 100px 20px;
+      position: relative;
+      z-index: 1;
     }
+
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: 3em;
       margin-bottom: 0.5em;
     }
+
     .platforms {
       display: flex;
       justify-content: center;
@@ -32,15 +87,18 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
+
     .icon {
       width: 50px;
       height: 50px;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
+
     .icon:hover {
       transform: scale(1.2);
     }
+
     input {
       padding: 12px;
       width: 80%;
@@ -50,6 +108,7 @@
       margin-top: 10px;
       display: block;
     }
+
     button {
       margin-top: 20px;
       padding: 12px 24px;
@@ -60,29 +119,31 @@
       font-size: 1em;
       cursor: pointer;
     }
+
     button:hover {
       background: linear-gradient(90deg, #b3865a, #cfa88c);
-    }
-    .fade {
-      animation: fadeIn 1s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <h1 class="fade">Drawly</h1>
-  <div class="platforms fade">
-    <img src="https://img.icons8.com/color/48/instagram-new--v1.png" alt="Instagram" class="icon" onclick="selectPlatform('Instagram')"/>
-    <img src="https://img.icons8.com/color/48/tiktok--v1.png" alt="TikTok" class="icon" onclick="selectPlatform('TikTok')"/>
-    <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" class="icon" onclick="selectPlatform('Facebook')"/>
-    <img src="https://img.icons8.com/color/48/twitter--v1.png" alt="X" class="icon" onclick="selectPlatform('X')"/>
+  <div class="background">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
   </div>
-  <p id="platformText" style="display:none;" class="fade">Gewählte Plattform: <span id="chosen"></span></p>
-  <input id="postUrl" placeholder="Post-URL hier einfügen..." style="display:none;" />
-  <button id="drawBtn" style="display:none;" onclick="drawWinner()">Pick a Winner</button>
+
+  <div class="container">
+    <h1>Drawly</h1>
+    <div class="platforms">
+      <img src="https://img.icons8.com/color/48/instagram-new--v1.png" alt="Instagram" class="icon" onclick="selectPlatform('Instagram')"/>
+      <img src="https://img.icons8.com/color/48/tiktok--v1.png" alt="TikTok" class="icon" onclick="selectPlatform('TikTok')"/>
+      <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" class="icon" onclick="selectPlatform('Facebook')"/>
+      <img src="https://img.icons8.com/color/48/twitter--v1.png" alt="X" class="icon" onclick="selectPlatform('X')"/>
+    </div>
+        <p id="platformText" style="display:none;">Gewählte Plattform: <span id="chosen"></span></p>
+    <input id="postUrl" placeholder="Post-URL hier einfügen..." style="display:none;" />
+    <button id="drawBtn" style="display:none;" onclick="drawWinner()">Pick a Winner</button>
+  </div>
 
   <script>
     function selectPlatform(name) {
@@ -93,10 +154,11 @@
     }
 
     function drawWinner() {
-      const platforms = ['@sunlover', '@naturequeen', '@pastelpop', '@boho_draw'];
-      const winner = platforms[Math.floor(Math.random() * platforms.length)];
+      const users = ['@sunlover', '@naturequeen', '@pastelpop', '@boho_draw'];
+      const winner = users[Math.floor(Math.random() * users.length)];
       alert('Gewinner: ' + winner);
     }
   </script>
 </body>
 </html>
+    
