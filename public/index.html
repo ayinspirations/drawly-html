@@ -2,54 +2,44 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Drawly – Auslosung</title>
+  <title>Drawly – Gewinnspielauslosung</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      background: #fdf6f0;
       font-family: 'Poppins', sans-serif;
+      background: #fdf6f0;
       color: #5b3e31;
       text-align: center;
     }
-
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 40px;
     }
-
     .logo {
       font-family: 'Playfair Display', serif;
       font-size: 1.8em;
       color: #a97c50;
     }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #5b3e31;
-      font-weight: 500;
+    .hidden {
+      display: none;
     }
-
-    main {
+    section {
+      max-width: 600px;
+      margin: 0 auto;
       padding: 40px 20px;
     }
-
-    input[type="text"] {
+    input[type="text"], input[type="number"] {
       padding: 12px;
-      width: 80%;
-      max-width: 400px;
+      width: 100%;
+      max-width: 500px;
       border: 1px solid #d7ccc8;
       border-radius: 8px;
+      margin-top: 10px;
     }
-
-    .filters, .winner-box {
-      margin-top: 30px;
-    }
-
     button {
       margin-top: 20px;
       padding: 12px 24px;
@@ -60,182 +50,157 @@
       font-size: 1em;
       cursor: pointer;
     }
-
     button:hover {
       background: linear-gradient(90deg, #b3865a, #cfa88c);
     }
-
-    #drawly-result {
-      font-size: 1.5em;
-      margin-top: 20px;
-      font-weight: bold;
+    .box {
+      background: #fff7f2;
+      padding: 20px;
+      border: 1px solid #e6dcd5;
+      border-radius: 10px;
+      margin-top: 30px;
     }
-
-    /* Traumfänger Styles */
-    #dreamcatcher {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.5;
-      z-index: 1000;
-    }
-
-    .swing {
-      animation: swing 5s ease-in-out infinite;
-      transform-origin: top center;
-    }
-
-    .feather {
-      transform-origin: top center;
-      animation: featherFloat 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes swing {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(2deg); }
-      100% { transform: rotate(0deg); }
-    }
-
-    @keyframes featherFloat {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(5px) rotate(2deg); }
+    .preview-img {
+      width: 100%;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-<header>
-  <div class="logo">Drawly</div>
-  <nav>
-    <a href="#">Preise</a>
-    <a href="#">FAQ</a>
-    <a href="#">Login</a>
-  </nav>
-</header>
-<main>
-  <h1>Social Media Giveaway Auslosung</h1>
-  <p>Füge den Link zum Gewinnspiel-Post ein:</p>
-  <input type="text" id="postUrl" placeholder="https://instagram.com/p/..." />
-
-  <div class="filters">
-    <p><strong>Kriterien:</strong></p>
-    <label><input type="checkbox" id="hashtag"> Mit bestimmtem Hashtag</label><br>
-    <label><input type="checkbox" id="mentions"> Freunde markiert</label><br>
-    <label><input type="checkbox" id="follow"> Muss dem Account folgen</label><br>
-    <label>Gewinneranzahl: <input type="number" id="winners" value="1" min="1" style="width: 60px;" /></label><br>
+  <header>
+    <div class="logo">Drawly</div>
+  </header>
+    <!-- Screen 1: Link eingeben -->
+  <section id="screen1">
+    <h1>Starte dein Gewinnspiel</h1>
+    <p>Füge den Link zu deinem Social-Media-Post ein:</p>
+    <input type="text" id="linkInput" placeholder="https://instagram.com/p/..." />
+    <br>
+    <button onclick="goToPreview()">Weiter</button>
+  </section>
+    <!-- Screen 2: Vorschau -->
+  <section id="screen2" class="hidden">
+    <h1>Dein Post im Überblick</h1>
+    <div class="box">
+      <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" alt="Post-Vorschau" class="preview-img" id="previewImage" />
+      <p id="likes">Likes: 532</p>
+      <p id="comments">Kommentare: 134</p>
+    </div>
+    <p style="margin-top: 10px;">Anzahl der Kommentare bestimmt den Preis</p>
+    <button onclick="goToFilters()">Kriterien festlegen</button>
+  </section>
+    <!-- Screen 3: Kriterien -->
+  <section id="screen3" class="hidden">
+    <h1>Wähle deine Kriterien</h1>
+    <div class="box" style="text-align: left;">
+      <label><input type="checkbox" id="filterHashtag"> Kommentar mit bestimmtem Hashtag</label><br><br>
+      <label><input type="checkbox" id="filterMention"> Markierte Freunde erforderlich</label><br><br>
+      <label><input type="checkbox" id="filterFollow"> Folgt dem Account</label><br><br>
+      <label>Anzahl Gewinner:
+        <input type="number" id="winnerCount" value="1" min="1" max="10" style="width: 60px;">
+      </label>
+    </div>
     <button onclick="startDraw()">Auslosung starten</button>
-  </div>
-    <div id="drawly-result" class="winner-box"></div>
-</main>
-
-<!-- Traumfänger SVG -->
-<div id="dreamcatcher">
-  <svg width="180" height="270" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" class="swing">
-    <circle cx="100" cy="70" r="50" stroke="#a97c50" stroke-width="4" fill="none"/>
-    <line x1="100" y1="20" x2="100" y2="120" stroke="#a97c50" stroke-width="1"/>
-    <line x1="70" y1="40" x2="130" y2="100" stroke="#a97c50" stroke-width="1"/>
-    <line x1="130" y1="40" x2="70" y2="100" stroke="#a97c50" stroke-width="1"/>
-    <line x1="85" y1="120" x2="85" y2="180" stroke="#a97c50" stroke-width="2"/>
-    <line x1="100" y1="120" x2="100" y2="180" stroke="#a97c50" stroke-width="2"/>
-    <line x1="115" y1="120" x2="115" y2="180" stroke="#a97c50" stroke-width="2"/>
-    <path class="feather" d="M85 180 Q80 190 85 200 Q90 210 85 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
-    <path class="feather" d="M100 180 Q95 190 100 200 Q105 210 100 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
-    <path class="feather" d="M115 180 Q110 190 115 200 Q120 210 115 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
-  </svg>
-</div>
-<script>
-  function startDraw() {
-    const output = document.getElementById("drawly-result");
-    const dreamcatcher = document.getElementById("dreamcatcher");
-
-    const fakeNames = [
-      "@sunlover", "@bohoqueen", "@natura.mind", "@soulbliss",
-      "@wildandfree", "@moon.child", "@earthbloom", "@pastelwave",
-      "@healingvibes", "@drawlyfan", "@creativemuse"
-    ];
-
-    // Traumfänger anzeigen
-    dreamcatcher.style.display = "block";
-    output.textContent = "";
-
-    let i = 0;
-    const duration = 4000; // Dauer der Slot-Animation
-    const interval = 100;  // Zeitabstand zwischen Namen
-    const totalSteps = duration / interval;
-
-    const slot = setInterval(() => {
-      output.textContent = fakeNames[i % fakeNames.length];
-      i++;
-    }, interval);
-
-    // Stoppe den Slot nach Dauer + zeige Konfetti
-    setTimeout(() => {
-      clearInterval(slot);
-      const winner = fakeNames[Math.floor(Math.random() * fakeNames.length)];
-      output.innerHTML = `Gewinner: <span style="color:#a97c50">${winner}</span>`;
-      dreamcatcher.style.display = "none";
-      launchConfetti();
-    }, duration);
+  </section>
+    <!-- Screen 4: Auslosung -->
+  <section id="screen4" class="hidden">
+    <h1>Ziehung läuft...</h1>
+    <div id="drawly-result" style="font-size: 2em; margin-top: 30px;">...</div>
+    <div id="dreamcatcher">
+      <svg width="180" height="270" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" class="swing">
+        <circle cx="100" cy="70" r="50" stroke="#a97c50" stroke-width="4" fill="none"/>
+        <line x1="100" y1="20" x2="100" y2="120" stroke="#a97c50" stroke-width="1"/>
+        <line x1="70" y1="40" x2="130" y2="100" stroke="#a97c50" stroke-width="1"/>
+        <line x1="130" y1="40" x2="70" y2="100" stroke="#a97c50" stroke-width="1"/>
+        <line x1="85" y1="120" x2="85" y2="180" stroke="#a97c50" stroke-width="2"/>
+        <line x1="100" y1="120" x2="100" y2="180" stroke="#a97c50" stroke-width="2"/>
+        <line x1="115" y1="120" x2="115" y2="180" stroke="#a97c50" stroke-width="2"/>
+        <path class="feather" d="M85 180 Q80 190 85 200 Q90 210 85 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
+        <path class="feather" d="M100 180 Q95 190 100 200 Q105 210 100 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
+        <path class="feather" d="M115 180 Q110 190 115 200 Q120 210 115 220" stroke="#c19a6b" fill="none" stroke-width="2"/>
+      </svg>
+    </div>
+    <div id="successMessage" style="display:none; margin-top: 30px;">
+      <p>Herzlichen Glückwunsch!</p>
+      <button onclick="shareResult()">Ergebnis teilen</button>
+    </div>
+  </section>
+  <script>
+  // Screens umschalten
+  function showScreen(id) {
+    document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
   }
 
-  // Einfacher Konfetti-Effekt mit Emojis
+  function goToPreview() {
+    const link = document.getElementById("linkInput").value;
+    if (!link) {
+      alert("Bitte Link eingeben");
+      return;
+    }
+
+    // Simuliere Vorschau
+    document.getElementById("previewImage").src = "https://via.placeholder.com/500x300.png?text=Post+Vorschau";
+    document.getElementById("likes").textContent = "Likes: 532";
+    document.getElementById("comments").textContent = "Kommentare: 134";
+    showScreen("screen2");
+  }
+
+  function goToFilters() {
+    showScreen("screen3");
+  }
+
+  function startDraw() {
+    showScreen("screen4");
+    document.getElementById("successMessage").style.display = "none";
+    document.getElementById("dreamcatcher").style.display = "block";
+    const output = document.getElementById("drawly-result");
+    const names = ["@bohoqueen", "@sunlover", "@moonbeam", "@vibesonly", "@drawlyfan"];
+    let i = 0;
+    const interval = setInterval(() => {
+      output.textContent = names[i % names.length];
+      i++;
+    }, 120);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      const winner = names[Math.floor(Math.random() * names.length)];
+      output.textContent = "Gewinner: " + winner;
+      document.getElementById("dreamcatcher").style.display = "none";
+      document.getElementById("successMessage").style.display = "block";
+      launchConfetti();
+    }, 3500);
+  }
+
+  function shareResult() {
+    alert("Ergebnis-Link kopiert! Jetzt kannst du ihn teilen.");
+  }
+
   function launchConfetti() {
-    for (let i = 0; i < 30; i++) {
-      const confetti = document.createElement("div");
-      confetti.textContent = "🎉";
-      confetti.style.position = "fixed";
-      confetti.style.left = Math.random() * 100 + "vw";
-      confetti.style.top = "-10px";
-      confetti.style.fontSize = "24px";
-      confetti.style.animation = `fall ${2 + Math.random() * 2}s linear forwards`;
-      document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 5000);
+    for (let i = 0; i < 25; i++) {
+      const c = document.createElement("div");
+      c.textContent = "🎉";
+      c.style.position = "fixed";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.top = "-10px";
+      c.style.fontSize = "24px";
+      c.style.animation = `fall ${2 + Math.random()}s linear forwards`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
     }
   }
 
-  // Konfetti-Fall-Animation
+  // Confetti-Fall
   const style = document.createElement("style");
   style.textContent = `
     @keyframes fall {
       to {
-        transform: translateY(100vh) rotate(360deg);
+        transform: translateY(100vh) rotate(720deg);
         opacity: 0;
       }
     }
   `;
   document.head.appendChild(style);
 </script>
-<div id="successMessage" style="display:none; margin-top: 30px;">
-  <p style="font-size: 1.2em;">Die Auslosung war erfolgreich!</p>
-  <button onclick="shareResult()">Ergebnis teilen</button>
-</div>
-
-<script>
-  function shareResult() {
-    const link = window.location.href;
-    const text = "Ich habe mit @drawly.io ein faires Gewinnspiel ausgelost!";
-    const shareURL = `https://www.instagram.com/?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`;
-    window.open(shareURL, "_blank");
-  }
-</script>
-
-<script>
-  // Zeige Erfolgsmeldung nach Gewinn
-  function showSuccess() {
-    document.getElementById("successMessage").style.display = "block";
-  }
-
-  // Ergänze zur bestehenden Timeout-Funktion im Slot:
-  setTimeout(() => {
-    clearInterval(slot);
-    const winner = fakeNames[Math.floor(Math.random() * fakeNames.length)];
-    output.innerHTML = `Gewinner: <span style="color:#a97c50">${winner}</span>`;
-    dreamcatcher.style.display = "none";
-    launchConfetti();
-    showSuccess(); // <- Zeigt Erfolgsmeldung & Button
-  }, duration);
-</script>
-
 </body>
 </html>
