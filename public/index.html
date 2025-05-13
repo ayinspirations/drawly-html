@@ -142,24 +142,9 @@
   </section>
   <script>
   const comments = [
-    {
-      user: "@sunlover",
-      text: "Ich will gewinnen! #BohoGiveaway @friend1 @friend2",
-      mentions: 2,
-      follows: ["@drawly.io", "@boho_shop"]
-    },
-    {
-      user: "@moonbeam",
-      text: "Lieb’s hier! #vibes",
-      mentions: 1,
-      follows: ["@vibes_inspo"]
-    },
-    {
-      user: "@drawlyfan",
-      text: "#BohoGiveaway für mich @bestie @soulmate",
-      mentions: 2,
-      follows: ["@drawly.io", "@boho_shop", "@vibes_inspo"]
-    }
+    { user: "@sunlover", text: "Ich will gewinnen! #BohoGiveaway", mentions: 2, follows: true },
+    { user: "@moonbeam", text: "Mega cool! #BohoVibes", mentions: 1, follows: false },
+    { user: "@drawlyfan", text: "Hier bin ich! #BohoGiveaway", mentions: 3, follows: true }
   ];
 
   function showScreen(id) {
@@ -196,19 +181,13 @@
     const minMentions = parseInt(document.getElementById("mentionCount").value, 10);
 
     const requireFollow = document.getElementById("requireFollow").checked;
-    const requiredFollows = document.getElementById("followAccounts").value
-      .split(",")
-      .map(a => a.trim().toLowerCase())
-      .filter(a => a.startsWith("@"));
 
     const winnerCount = parseInt(document.getElementById("winnerCount").value, 10);
 
     const valid = comments.filter(c => {
       const hasHashtag = !requireHashtag || (hashtag && c.text.toLowerCase().includes(hashtag));
       const hasMentions = !requireMention || c.mentions >= minMentions;
-      const follows = !requireFollow || requiredFollows.every(req =>
-        (c.follows || []).map(f => f.toLowerCase()).includes(req)
-      );
+      const follows = !requireFollow || c.follows === true;
       return hasHashtag && hasMentions && follows;
     });
 
@@ -227,12 +206,8 @@
 
     setTimeout(() => {
       clearInterval(interval);
-      const winners = [];
-      while (winners.length < winnerCount && names.length > 0) {
-        const randIndex = Math.floor(Math.random() * names.length);
-        winners.push(names.splice(randIndex, 1)[0]);
-      }
-      output.innerHTML = `<h2>Gewinner:</h2><p>${winners.join("<br>")}</p>`;
+      const winner = names[Math.floor(Math.random() * names.length)];
+      output.innerHTML = `<h2>Gewinner:</h2><p>${winner}</p>`;
       document.getElementById("dreamcatcher").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
       launchConfetti();
