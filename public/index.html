@@ -4,12 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Drawly.io</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fdf6f0;
+      color: #5b3e31;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      border: 1px solid #d7ccc8;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #c19a6b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a97c50;
+    }
+  </style>
 </head>
-<body style='font-family: sans-serif; text-align: center; padding: 50px;'>
-  <h1>Drawly MVP</h1>
+<body>
+  <h1>Drawly</h1>
   <p>Gib den Link zu deinem Gewinnspiel-Post ein:</p>
-  <input type="text" placeholder="https://instagram.com/post/..." style="padding: 10px; width: 80%;" />
-  <br/><br/>
-  <button onclick="alert("Gewinner: @random_user")" style="padding: 10px 20px;">Pick a Winner</button>
+  <input type="text" placeholder="https://instagram.com/post/..." />
+  <br/>
+  <button onclick="alert('Gewinner: @random_user')">Pick a Winner</button>
 </body>
 </html>
