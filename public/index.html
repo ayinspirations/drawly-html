@@ -53,13 +53,25 @@
     button:hover {
       background: linear-gradient(90deg, #b3865a, #cfa88c);
     }
-    .box {
-      background: #fff7f2;
-      padding: 20px;
-      border: 1px solid #e6dcd5;
-      border-radius: 10px;
-      margin-top: 30px;
-    }
+   .box {
+  background: #fffaf6;
+  border: 1px solid #e6dcd5;
+  border-radius: 12px;
+  padding: 20px 25px;
+  margin-top: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.box input[type="text"], .box input[type="number"] {
+  margin-top: 5px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #dcd3c9;
+  width: 100%;
+}
+.box label {
+  display: block;
+  margin-bottom: 16px;
+}
     .preview-img {
       width: 100%;
       border-radius: 10px;
@@ -140,37 +152,27 @@
       <button onclick="shareResult()">Ergebnis teilen</button>
     </div>
   </section>
-<script>
-  // Simulierte Kommentare
+  <script>
   const comments = [
-    { user: "@sunlover", text: "Ich will gewinnen! #BohoGiveaway", mentions: 2, follows: true },
-    { user: "@moonbeam", text: "Mega cool! #BohoVibes", mentions: 1, follows: false },
-    { user: "@drawlyfan", text: "Hier bin ich! #BohoGiveaway", mentions: 3, follows: true },
-    { user: "@pastellove", text: "#BohoGiveaway @friend1 @friend2", mentions: 2, follows: true },
-    { user: "@slowvibes", text: "Ich liebe das! #Cozy", mentions: 0, follows: true }
-  ];
-
-  // Screens umschalten
-  function showScreen(id) {
-    document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
-  }
-
-  function goToPreview() {
-    const link = document.getElementById("linkInput").value;
-    if (!link) {
-      alert("Bitte Link eingeben");
-      return;
+    {
+      user: "@sunlover",
+      text: "Ich will gewinnen! #BohoGiveaway @friend1 @friend2",
+      mentions: 2,
+      follows: ["@drawly.io", "@boho_shop"]
+    },
+    {
+      user: "@moonbeam",
+      text: "Lieb’s hier! #vibes",
+      mentions: 1,
+      follows: ["@vibes_inspo"]
+    },
+    {
+      user: "@drawlyfan",
+      text: "#BohoGiveaway für mich @bestie @soulmate",
+      mentions: 2,
+      follows: ["@drawly.io", "@boho_shop", "@vibes_inspo"]
     }
-    document.getElementById("previewImage").src = "https://via.placeholder.com/500x300.png?text=Post+Vorschau";
-    document.getElementById("likes").textContent = "Likes: 532";
-    document.getElementById("comments").textContent = `Kommentare: ${comments.length}`;
-    showScreen("screen2");
-  }
-
-  function goToFilters() {
-    showScreen("screen3");
-  }
+  ];
 
   function startDraw() {
     showScreen("screen4");
@@ -178,29 +180,38 @@
     document.getElementById("dreamcatcher").style.display = "block";
     const output = document.getElementById("drawly-result");
 
-    // Kriterien einsammeln
+    // Kriterien holen
     const requireHashtag = document.getElementById("requireHashtag").checked;
-    const hashtag = document.getElementById("hashtagInput").value.trim();
+    const hashtag = document.getElementById("hashtagInput").value.trim().toLowerCase();
+
     const requireMention = document.getElementById("requireMention").checked;
     const minMentions = parseInt(document.getElementById("mentionCount").value, 10);
+
     const requireFollow = document.getElementById("requireFollow").checked;
+    const requiredFollows = document.getElementById("followAccounts").value
+      .split(",")
+      .map(a => a.trim().toLowerCase())
+      .filter(a => a.startsWith("@"));
+
     const winnerCount = parseInt(document.getElementById("winnerCount").value, 10);
 
-    // Kommentare filtern
+    // Kommentare prüfen
     const valid = comments.filter(c => {
-      const hasHashtag = !requireHashtag || (hashtag && c.text.includes(hashtag));
+      const hasHashtag = !requireHashtag || (hashtag && c.text.toLowerCase().includes(hashtag));
       const hasMentions = !requireMention || c.mentions >= minMentions;
-      const follows = !requireFollow || c.follows === true;
+      const follows = !requireFollow || requiredFollows.every(req =>
+        (c.follows || []).map(f => f.toLowerCase()).includes(req)
+      );
       return hasHashtag && hasMentions && follows;
     });
 
     if (valid.length === 0) {
-      output.textContent = "Keine Teilnehmer erfüllen die Kriterien.";
+      output.innerHTML = "<div style='color:#b84c4c; font-weight:500;'>Keine Teilnehmer erfüllen die Kriterien.</div>";
       document.getElementById("dreamcatcher").style.display = "none";
       return;
     }
 
-    // Slot-Animation
+    // Slot-Effekt
     let i = 0;
     const names = valid.map(c => c.user);
     const interval = setInterval(() => {
@@ -215,40 +226,14 @@
         const randIndex = Math.floor(Math.random() * names.length);
         winners.push(names.splice(randIndex, 1)[0]);
       }
-      output.innerHTML = `Gewinner: <br><strong style="color:#a97c50">${winners.join("<br>")}</strong>`;
+      output.innerHTML = `
+        <div style="background: #fffaf6; border: 1px solid #e6dcd5; border-radius: 12px; padding: 20px; margin-top: 20px;">
+          <h2 style="color:#a97c50; font-family:'Playfair Display', serif;">Gewinner</h2>
+          <p style="font-size: 1.4em;">${winners.join("<br>")}</p>
+        </div>`;
       document.getElementById("dreamcatcher").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
       launchConfetti();
     }, 3500);
   }
-
-  function shareResult() {
-    alert("Ergebnis-Link kopiert! Jetzt kannst du ihn teilen.");
-  }
-
-  function launchConfetti() {
-    for (let i = 0; i < 25; i++) {
-      const c = document.createElement("div");
-      c.textContent = "🎉";
-      c.style.position = "fixed";
-      c.style.left = Math.random() * 100 + "vw";
-      c.style.top = "-10px";
-      c.style.fontSize = "24px";
-      c.style.animation = `fall ${2 + Math.random()}s linear forwards`;
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 4000);
-    }
-  }
-
-  // Konfetti-Fall-Animation
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes fall {
-      to {
-        transform: translateY(100vh) rotate(720deg);
-        opacity: 0;
-      }
-    }
-  `;
-  document.head.appendChild(style);
 </script>
