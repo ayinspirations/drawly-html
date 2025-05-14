@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Drawly – Giveaway Picker</title>
+  <title>Drawly – Social Giveaway</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -21,6 +21,9 @@
       background: var(--bg);
       color: var(--text);
       text-align: center;
+      background-image: url('https://via.placeholder.com/1500x1000.png?text=Boho+Kreise');
+      background-repeat: no-repeat;
+      background-size: cover;
     }
 
     header {
@@ -110,6 +113,17 @@
         opacity: 0;
       }
     }
+
+    .language-switch {
+      margin-top: 2rem;
+    }
+
+    .language-switch img {
+      width: 30px;
+      height: 20px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -118,14 +132,14 @@
 
 <!-- Screen 1: Link-Eingabe -->
 <div id="screen1" class="screen active">
-  <h2>Instagram-Link eingeben</h2>
+  <h2 id="title">Instagram-Link eingeben</h2>
   <input type="text" id="postLink" placeholder="Post-Link hier einfügen..." />
   <button onclick="showPreview()">Vorschau anzeigen</button>
 </div>
 
 <!-- Screen 2: Vorschau -->
 <div id="screen2" class="screen">
-  <h2>Vorschau</h2>
+  <h2 id="previewTitle">Vorschau</h2>
   <div id="postPreview">
     <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" alt="Vorschau">
     <p id="likes">Likes: 123</p>
@@ -136,7 +150,7 @@
 
 <!-- Screen 3: Kriterien -->
 <div id="screen3" class="screen">
-  <h2>Kriterien auswählen</h2>
+  <h2 id="criteriaTitle">Kriterien auswählen</h2>
   <div id="criteriaBox">
     <label><input type="checkbox" id="requireHashtag"> Hashtag erforderlich</label>
     <input type="text" id="hashtagInput" placeholder="#Giveaway"><br>
@@ -155,17 +169,81 @@
 
 <!-- Screen 4: Gewinneranzeige -->
 <div id="screen4" class="screen">
-  <h2>Auslosung läuft…</h2>
+  <h2 id="drawingTitle">Auslosung läuft…</h2>
   <div id="winnerAnimation">
     <img src="https://i.pravatar.cc/100?u=winner" alt="Profilbild">
-    <h3>🎉 Glückwunsch @sunlover!</h3>
+    <h3 id="congratsText">🎉 Glückwunsch @sunlover!</h3>
     <button onclick="takeScreenshot()">Screenshot speichern</button>
   </div>
 </div>
 
 <div class="confetti" id="confetti"></div>
 
+<div class="language-switch">
+  <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" onclick="setLanguage('de')">
+  <img src="https://flagcdn.com/w40/gb.png" alt="English" onclick="setLanguage('en')">
+  <img src="https://flagcdn.com/w40/fr.png" alt="Français" onclick="setLanguage('fr')">
+</div>
+
 <script>
+  const translations = {
+    de: {
+      title: "Instagram-Link eingeben",
+      previewTitle: "Vorschau",
+      criteriaTitle: "Kriterien auswählen",
+      drawingTitle: "Auslosung läuft…",
+      congratsText: "🎉 Glückwunsch @sunlover!",
+      placeholderLink: "Post-Link hier einfügen...",
+      previewButton: "Vorschau anzeigen",
+      criteriaButton: "Kriterien festlegen",
+      drawButton: "Gewinner festlegen",
+      screenshotButton: "Screenshot speichern"
+    },
+    en: {
+      title: "Enter Instagram Link",
+      previewTitle: "Preview",
+      criteriaTitle: "Select Criteria",
+      drawingTitle: "Drawing in progress…",
+      congratsText: "🎉 Congratulations @sunlover!",
+      placeholderLink: "Enter post link here...",
+      previewButton: "Show Preview",
+      criteriaButton: "Set Criteria",
+      drawButton: "Select Winner",
+      screenshotButton: "Save Screenshot"
+    },
+    fr: {
+      title: "Entrez le lien Instagram",
+      previewTitle: "Aperçu",
+      criteriaTitle: "Sélectionner les critères",
+      drawingTitle: "Tirage en cours…",
+      congratsText: "🎉 Félicitations @sunlover!",
+      placeholderLink: "Entrez le lien du post ici...",
+      previewButton: "Afficher l'aperçu",
+      criteriaButton: "Définir les critères",
+      drawButton: "Sélectionner le gagnant",
+      screenshotButton: "Enregistrer la capture d'écran"
+    }
+  };
+
+  function setLanguage(lang) {
+    document.getElementById("title").textContent = translations[lang].title;
+    document.getElementById("previewTitle").textContent = translations[lang].previewTitle;
+      document.getElementById("criteriaTitle").textContent = translations[lang].criteriaTitle;
+    document.getElementById("drawingTitle").textContent = translations[lang].drawingTitle;
+    document.getElementById("congratsText").textContent = translations[lang].congratsText;
+    document.getElementById("postLink").placeholder = translations[lang].placeholderLink;
+    document.querySelector('#screen1 button').textContent = translations[lang].previewButton;
+    document.querySelector('#screen2 button').textContent = translations[lang].criteriaButton;
+    document.querySelector('#screen3 button').textContent = translations[lang].drawButton;
+    document.querySelector('#winnerAnimation button').textContent = translations[lang].screenshotButton;
+  }
+
+  function detectBrowserLanguage() {
+    const lang = navigator.language.slice(0, 2);
+    if (translations[lang]) setLanguage(lang);
+    else setLanguage('en');
+  }
+
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -210,6 +288,8 @@
       link.click();
     });
   }
+
+  document.addEventListener("DOMContentLoaded", detectBrowserLanguage);
 </script>
 
 </body>
