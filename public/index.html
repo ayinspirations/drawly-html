@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --bg: #fdf6f0;
+      --bg: #f5f0e6;
       --accent: #e8dcd1;
       --text: #5b3e31;
       --button: #c8a989;
@@ -21,9 +21,7 @@
       background: var(--bg);
       color: var(--text);
       text-align: center;
-      background-image: url('https://via.placeholder.com/1500x1000.png?text=Boho+Kreise');
-      background-repeat: no-repeat;
-      background-size: cover;
+      overflow: hidden;
     }
 
     header {
@@ -42,6 +40,8 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.05);
       padding: 2rem;
       animation: fadeIn 0.4s ease;
+      position: relative;
+      z-index: 1;
     }
 
     .screen.active {
@@ -124,9 +124,55 @@
       margin: 0 5px;
       cursor: pointer;
     }
+
+    /* Animierte Kreise im Hintergrund */
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: moveCircle 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes moveCircle {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    .circle1 {
+      width: 100px;
+      height: 100px;
+      background: #d8cfc4;
+      top: -100px;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .circle2 {
+      width: 150px;
+      height: 150px;
+      background: #eae4dc;
+      top: -150px;
+      left: 50%;
+      animation-delay: 5s;
+    }
+
+    .circle3 {
+      width: 80px;
+      height: 80px;
+      background: #f0eae2;
+      top: -80px;
+      left: 80%;
+      animation-delay: 10s;
+    }
   </style>
 </head>
 <body>
+
+<!-- Animierte Kreise -->
+<div class="circle circle1"></div>
+<div class="circle circle2"></div>
+<div class="circle circle3"></div>
 
 <header>Drawly</header>
 
@@ -228,7 +274,7 @@
   function setLanguage(lang) {
     document.getElementById("title").textContent = translations[lang].title;
     document.getElementById("previewTitle").textContent = translations[lang].previewTitle;
-      document.getElementById("criteriaTitle").textContent = translations[lang].criteriaTitle;
+    document.getElementById("criteriaTitle").textContent = translations[lang].criteriaTitle;
     document.getElementById("drawingTitle").textContent = translations[lang].drawingTitle;
     document.getElementById("congratsText").textContent = translations[lang].congratsText;
     document.getElementById("postLink").placeholder = translations[lang].placeholderLink;
