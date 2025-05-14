@@ -21,7 +21,7 @@
       background: var(--bg);
       color: var(--text);
       text-align: center;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     header {
@@ -165,6 +165,23 @@
       left: 80%;
       animation-delay: 10s;
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .screen {
+        margin: 1rem;
+        padding: 1rem;
+      }
+
+      input, button {
+        width: 90%;
+      }
+
+      #winnerAnimation img {
+        width: 80px;
+        height: 80px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -229,6 +246,10 @@
   <img src="https://flagcdn.com/w40/de.png" alt="Deutsch" onclick="setLanguage('de')">
   <img src="https://flagcdn.com/w40/gb.png" alt="English" onclick="setLanguage('en')">
   <img src="https://flagcdn.com/w40/fr.png" alt="Français" onclick="setLanguage('fr')">
+  <img src="https://flagcdn.com/w40/es.png" alt="Español" onclick="setLanguage('es')">
+  <img src="https://flagcdn.com/w40/cn.png" alt="中文" onclick="setLanguage('zh')">
+  <img src="https://flagcdn.com/w40/ru.png" alt="Русский" onclick="setLanguage('ru')">
+  <img src="https://flagcdn.com/w40/tr.png" alt="Türkçe" onclick="setLanguage('tr')">
 </div>
 
 <script>
@@ -256,7 +277,7 @@
       criteriaButton: "Set Criteria",
       drawButton: "Select Winner",
       screenshotButton: "Save Screenshot"
-    },
+     },
     fr: {
       title: "Entrez le lien Instagram",
       previewTitle: "Aperçu",
@@ -267,27 +288,75 @@
       previewButton: "Afficher l'aperçu",
       criteriaButton: "Définir les critères",
       drawButton: "Sélectionner le gagnant",
-      screenshotButton: "Enregistrer la capture d'écran"
+      screenshotButton: "Enregistrer la capture"
+    },
+    es: {
+      title: "Introduce el enlace de Instagram",
+      previewTitle: "Vista previa",
+      criteriaTitle: "Seleccionar criterios",
+      drawingTitle: "Sorteo en curso…",
+      congratsText: "🎉 ¡Felicidades @sunlover!",
+      placeholderLink: "Pega el enlace del post...",
+      previewButton: "Mostrar vista previa",
+      criteriaButton: "Establecer criterios",
+      drawButton: "Seleccionar ganador",
+      screenshotButton: "Guardar captura"
+    },
+    zh: {
+      title: "输入 Instagram 链接",
+      previewTitle: "预览",
+      criteriaTitle: "选择条件",
+      drawingTitle: "正在抽奖…",
+      congratsText: "🎉 恭喜 @sunlover！",
+      placeholderLink: "在此输入链接...",
+      previewButton: "显示预览",
+      criteriaButton: "设置条件",
+      drawButton: "选择获奖者",
+      screenshotButton: "保存截图"
+    },
+    ru: {
+      title: "Введите ссылку Instagram",
+      previewTitle: "Предпросмотр",
+      criteriaTitle: "Выбор критериев",
+      drawingTitle: "Розыгрыш…",
+      congratsText: "🎉 Поздравляем @sunlover!",
+      placeholderLink: "Введите ссылку на пост...",
+      previewButton: "Показать превью",
+      criteriaButton: "Задать критерии",
+      drawButton: "Выбрать победителя",
+      screenshotButton: "Сохранить скриншот"
+    },
+    tr: {
+      title: "Instagram bağlantısını girin",
+      previewTitle: "Önizleme",
+      criteriaTitle: "Kriterleri seçin",
+      drawingTitle: "Çekiliş yapılıyor…",
+      congratsText: "🎉 Tebrikler @sunlover!",
+      placeholderLink: "Gönderi bağlantısını buraya girin...",
+      previewButton: "Önizlemeyi göster",
+      criteriaButton: "Kriterleri belirle",
+      drawButton: "Kazananı seç",
+      screenshotButton: "Ekran görüntüsünü kaydet"
     }
   };
 
   function setLanguage(lang) {
-    document.getElementById("title").textContent = translations[lang].title;
-    document.getElementById("previewTitle").textContent = translations[lang].previewTitle;
-    document.getElementById("criteriaTitle").textContent = translations[lang].criteriaTitle;
-    document.getElementById("drawingTitle").textContent = translations[lang].drawingTitle;
-    document.getElementById("congratsText").textContent = translations[lang].congratsText;
-    document.getElementById("postLink").placeholder = translations[lang].placeholderLink;
-    document.querySelector('#screen1 button').textContent = translations[lang].previewButton;
-    document.querySelector('#screen2 button').textContent = translations[lang].criteriaButton;
-    document.querySelector('#screen3 button').textContent = translations[lang].drawButton;
-    document.querySelector('#winnerAnimation button').textContent = translations[lang].screenshotButton;
+    const t = translations[lang] || translations.en;
+    document.getElementById("title").textContent = t.title;
+    document.getElementById("previewTitle").textContent = t.previewTitle;
+    document.getElementById("criteriaTitle").textContent = t.criteriaTitle;
+    document.getElementById("drawingTitle").textContent = t.drawingTitle;
+    document.getElementById("congratsText").textContent = t.congratsText;
+    document.getElementById("postLink").placeholder = t.placeholderLink;
+    document.querySelector('#screen1 button').textContent = t.previewButton;
+    document.querySelector('#screen2 button').textContent = t.criteriaButton;
+    document.querySelector('#screen3 button').textContent = t.drawButton;
+    document.querySelector('#winnerAnimation button').textContent = t.screenshotButton;
   }
 
   function detectBrowserLanguage() {
     const lang = navigator.language.slice(0, 2);
-    if (translations[lang]) setLanguage(lang);
-    else setLanguage('en');
+    setLanguage(lang);
   }
 
   function showScreen(id) {
@@ -337,6 +406,5 @@
 
   document.addEventListener("DOMContentLoaded", detectBrowserLanguage);
 </script>
-
 </body>
 </html>
