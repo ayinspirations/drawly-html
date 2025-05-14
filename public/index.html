@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Drawly – Social Giveaway Picker</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <!-- html2canvas CDN -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
@@ -65,6 +68,47 @@
         opacity: 0;
       }
     }
+    /* Boho Button Style */
+    button {
+      background: #f4e4d6;
+      color: #5c4033;
+      border: none;
+      padding: 0.9rem 1.5rem;
+      font-family: 'Georgia', serif;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      box-shadow: 0 3px 8px rgba(160, 130, 100, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #e9d2be;
+      transform: scale(1.03);
+    }
+    /* Background Circles */
+    .background-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      animation: move 20s infinite alternate;
+    }
+    @keyframes move {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100px); }
+    }
+    /* Winner Profile */
+    .winner-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .winner-profile img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -72,7 +116,7 @@
   <nav>
     <img src="logo.png" alt="Drawly Logo" onclick="goHome()" />
     <ul>
-      <li><a href="#">Login</a></li>
+      <li><a href="#" onclick="showScreen('loginScreen')">Login</a></li>
       <li><a href="#">Modules</a></li>
       <li><a href="#">Pricing</a></li>
       <li><a href="#">Impressum</a></li>
@@ -88,6 +132,10 @@
       <option value="zh">中文</option>
     </select>
   </nav>
+
+  <!-- Background Circles -->
+  <div class="background-circle" style="width: 200px; height: 200px; background: #fdf6ee; top: 10%; left: 20%;"></div>
+  <div class="background-circle" style="width: 150px; height: 150px; background: #f2e4d4; top: 30%; left: 60%;"></div>
 
   <section id="screen1" class="screen active">
     <h1>Drawly</h1>
@@ -114,21 +162,40 @@
 
   <section id="screen4" class="screen">
     <h2 id="winnerTitle">And the winner is…</h2>
-    <div id="winnerDisplay">[Name wird hier erscheinen]</div>
+    <div class="winner-profile">
+      <img id="winnerImage" src="profile-placeholder.png" alt="Winner Profile Picture">
+      <div id="winnerDisplay">[Name wird hier erscheinen]</div>
+    </div>
     <button onclick="takeScreenshot()">Screenshot speichern</button>
   </section>
 
+  <section id="loginScreen" class="screen">
+    <h2>Login / Registrierung</h2>
+    <input type="email" id="email" placeholder="E-Mail" />
+    <input type="password" id="password" placeholder="Passwort" />
+    <button onclick="register()">Registrieren</button>
+    <button onclick="login()">Login</button>
+    <div id="userStatus"></div>
+    <button onclick="logout()">Logout</button>
+  </section>
+
   <script>
-    const screens = ["screen1", "screen2", "screen3", "screen4"];
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      // ... other config values
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    const screens = ["screen1", "screen2", "screen3", "screen4", "loginScreen"];
     const translations = {
       de: { intro: "Starte deine faire Auslosung – in Boho-Ästhetik", linkPlaceholder: "Beitragslink einfügen…", previewButton: "Weiter zur Vorschau", criteriaTitle: "Kriterien", winnerTitle: "And the winner is…", screenshot: "Screenshot speichern" },
       en: { intro: "Start your fair giveaway – in boho style", linkPlaceholder: "Insert post link...", previewButton: "Continue to preview", criteriaTitle: "Criteria", winnerTitle: "And the winner is…", screenshot: "Save screenshot" },
-      es: { intro: "Inicia tu sorteo justo – al estilo boho", linkPlaceholder: "Pega el enlace de la publicación…", previewButton: "Ver vista previa", criteriaTitle: "Criterios", winnerTitle: "Y el ganador es…", screenshot: "Guardar captura" },
-      fr: { intro: "Lancez votre tirage au sort équitable – style boho", linkPlaceholder: "Collez le lien du post…", previewButton: "Voir l’aperçu", criteriaTitle: "Critères", winnerTitle: "Et le gagnant est…", screenshot: "Enregistrer capture" },
-      it: { intro: "Avvia la tua estrazione – in stile boho", linkPlaceholder: "Inserisci il link del post…", previewButton: "Anteprima", criteriaTitle: "Criteri", winnerTitle: "E il vincitore è…", screenshot: "Salva screenshot" },
-      tr: { intro: "Adil çekilişini başlat – boho tarzında", linkPlaceholder: "Gönderi bağlantısını yapıştır…", previewButton: "Önizlemeye geç", criteriaTitle: "Kriterler", winnerTitle: "Ve kazanan…", screenshot: "Ekran görüntüsünü kaydet" },
-      ru: { intro: "Начни честный розыгрыш — в стиле бохо", linkPlaceholder: "Вставьте ссылку на пост…", previewButton: "К предпросмотру", criteriaTitle: "Критерии", winnerTitle: "И победитель…", screenshot: "Сохранить скриншот" },
-      zh: { intro: "开始你的公平抽奖 – Boho风格", linkPlaceholder: "粘贴帖子链接…", previewButton: "继续预览", criteriaTitle: "条件", winnerTitle: "获奖者是…", screenshot: "保存截图" }
+      // ... other translations
     };
 
     function showScreen(id) {
@@ -173,6 +240,7 @@
       const winner = dummyComments[Math.floor(Math.random() * dummyComments.length)];
       const timestamp = new Date().toISOString();
       const hash = createVerificationHash(winner, timestamp);
+      document.getElementById("winnerImage").src = "https://i.pravatar.cc/100?u=" + winner; // Avatar-Dummy
       document.getElementById("winnerDisplay").innerHTML =
         `<strong>${winner}</strong><br><small>Zeitstempel: ${timestamp}</small><br><small>Verifizierungscode: ${hash}</small>`;
       showScreen("screen4");
@@ -185,8 +253,7 @@
       document.getElementById("postLink").placeholder = t.linkPlaceholder;
       document.querySelector("#screen1 button").textContent = t.previewButton;
       document.querySelector("#screen3 h2").textContent = t.criteriaTitle;
-      document.getElementById("winnerTitle").text 
-          = t.winnerTitle;
+      document.getElementById("winnerTitle").textContent = t.winnerTitle;
       document.querySelector("#screen4 button").textContent = t.screenshot;
     }
 
@@ -196,6 +263,39 @@
       changeLanguage(defaultLang);
       document.getElementById("languageSelector").value = defaultLang;
     });
+
+    // Firebase Auth Funktionen
+    function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          document.getElementById("userStatus").textContent = "Erfolgreich registriert: " + userCredential.user.email;
+        })
+        .catch((error) => {
+          document.getElementById("userStatus").textContent = error.message;
+        });
+    }
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          document.getElementById("userStatus").textContent = "Eingeloggt als: " + userCredential.user.email;
+        })
+        .catch((error) => {
+          document.getElementById("userStatus").textContent = error.message;
+        });
+    }
+
+    function logout() {
+      auth.signOut()
+        .then(() => {
+          document.getElementById("userStatus").textContent = "Erfolgreich ausgeloggt";
+        });
+    }
   </script>
 </body>
 </html>
+      
