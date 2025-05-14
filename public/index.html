@@ -4,132 +4,102 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Drawly – Giveaway Picker</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --beige: #fdf6f0;
-      --sand: #e8dcd1;
+      --bg: #fdf6f0;
+      --accent: #e8dcd1;
       --text: #5b3e31;
-      --accent: #c8a989;
-      --accent-hover: #b88e70;
+      --button: #c8a989;
+      --button-hover: #b88e70;
     }
 
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: var(--beige);
+      background: var(--bg);
       color: var(--text);
       text-align: center;
-      position: relative;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .background-circle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.2;
-      animation: float 12s ease-in-out infinite alternate;
-      z-index: 0;
-    }
-    .c1 { width: 300px; height: 300px; background: var(--sand); top: 5%; left: 5%; }
-    .c2 { width: 180px; height: 180px; background: var(--sand); top: 60%; left: 70%; }
-    .c3 { width: 100px; height: 100px; background: var(--sand); top: 40%; left: 30%; }
-
-    @keyframes float {
-      from { transform: translateY(0); }
-      to { transform: translateY(20px); }
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 2rem;
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-    }
-    nav a {
-      margin-left: 1.5rem;
-      text-decoration: none;
-      font-weight: 500;
+      font-size: 2rem;
+      padding: 1.5rem;
       color: var(--text);
     }
 
     .card {
       background: white;
-      border-radius: 24px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
       max-width: 600px;
-      margin: 3rem auto;
-      position: relative;
-      z-index: 1;
+      margin: 2rem auto;
     }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: #7a6b60;
-      margin-bottom: 2rem;
-    }
-
-    input {
-      padding: 0.9rem;
-      width: 60%;
+    input, button {
+      padding: 12px;
       border-radius: 50px;
       border: 1px solid #ccc;
+      margin: 10px 5px;
+      width: 80%;
+      max-width: 400px;
+      font-family: inherit;
       font-size: 1rem;
-      margin-right: 10px;
     }
 
     button {
-      padding: 0.9rem 1.5rem;
-      border-radius: 50px;
-      background: var(--accent);
+      background: var(--button);
       color: white;
+      font-weight: bold;
+      cursor: pointer;
       border: none;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
     }
+
     button:hover {
-      background: var(--accent-hover);
+      background: var(--button-hover);
     }
 
-    .languages {
-      display: flex;
-      justify-content: center;
-      margin-top: 3rem;
-      gap: 1rem;
+    #postPreview img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+      margin-top: 1rem;
     }
 
-    .languages img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    #criteriaBox {
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+
+    #criteriaBox label {
+      display: block;
+      margin: 0.5rem 0;
     }
 
     #drawly-result {
       margin-top: 2rem;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
+    }
+
+    #winnerAnimation {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    #winnerAnimation img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1rem;
     }
 
     .confetti {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
-      width: 100%;
-      height: 100%;
       z-index: 9999;
     }
 
@@ -143,67 +113,93 @@
 </head>
 <body>
 
-  <!-- Hintergrundkreise -->
-  <div class="background-circle c1"></div>
-  <div class="background-circle c2"></div>
-  <div class="background-circle c3"></div>
+<header>Drawly</header>
 
-  <header>
-    <div style="font-weight: bold;">Drawly</div>
-    <nav>
-      <a href="#">Login</a>
-      <a href="#">Modules</a>
-      <a href="#">Pricing</a>
-      <a href="#">Impressum</a>
-    </nav>
-  </header>
+<div class="card">
+  <h2>Instagram-Link eingeben</h2>
+  <input type="text" id="postLink" placeholder="Post-Link hier einfügen..." />
+  <button onclick="showPreview()">Vorschau anzeigen</button>
 
-  <div class="card">
-    <h1>Online Giveaway Picker</h1>
-    <div class="subtitle">Randomly select winners from your social media giveaways</div>
-    <div>
-      <input type="text" id="linkInput" placeholder="Enter a post URL..." />
-      <button onclick="drawWinner()">Select Winner</button>
-    </div>
-    <div id="drawly-result"></div>
+  <div id="postPreview" style="display:none;">
+    <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" alt="Vorschau">
+    <p id="likes">Likes: 123</p>
+    <p id="comments">Kommentare: 45</p>
+    <button onclick="showCriteria()">Kriterien festlegen</button>
   </div>
 
-  <div class="languages">
-    <img src="https://flagcdn.com/w40/de.png" alt="Deutsch">
-    <img src="https://flagcdn.com/w40/us.png" alt="English">
-    <img src="https://flagcdn.com/w40/es.png" alt="Spanish">
-    <img src="https://flagcdn.com/w40/fr.png" alt="French">
-    <img src="https://flagcdn.com/w40/it.png" alt="Italian">
-    <img src="https://flagcdn.com/w40/tr.png" alt="Turkish">
-    <img src="https://flagcdn.com/w40/ru.png" alt="Russian">
-    <img src="https://flagcdn.com/w40/cn.png" alt="Chinese">
+  <div id="criteriaBox" style="display:none;">
+    <label><input type="checkbox" id="requireHashtag"> Hashtag erforderlich</label>
+    <input type="text" id="hashtagInput" placeholder="#Giveaway"><br>
+
+    <label><input type="checkbox" id="requireMention"> Freunde markieren</label>
+    <input type="number" id="mentionCount" value="1" min="1"><br>
+
+    <label><input type="checkbox" id="requireFollow"> Muss folgen</label><br><br>
+
+    <label>Anzahl Gewinner:</label>
+    <input type="number" id="winnerCount" value="1" min="1" max="10"><br><br>
+
+    <button onclick="startDraw()">Gewinner festlegen</button>
   </div>
 
-  <div class="confetti" id="confetti"></div>
+  <div id="drawly-result"></div>
 
-  <script>
-    function drawWinner() {
-      const result = document.getElementById("drawly-result");
-      result.textContent = "🎉 Congratulations @sunlover!";
+  <div id="winnerAnimation">
+    <img src="https://i.pravatar.cc/100?u=winner" alt="Profilbild">
+    <h3>🎉 Glückwunsch @sunlover!</h3>
+    <button onclick="takeScreenshot()">Screenshot speichern</button>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+  function showPreview() {
+    const link = document.getElementById("postLink").value.trim();
+    if (!link) return alert("Bitte einen Link eingeben.");
+    document.getElementById("postPreview").style.display = "block";
+  }
+
+  function showCriteria() {
+    document.getElementById("criteriaBox").style.display = "block";
+  }
+
+  function startDraw() {
+    const result = document.getElementById("drawly-result");
+    result.textContent = "Ziehung läuft...";
+    setTimeout(() => {
+      result.textContent = "";
+      document.getElementById("winnerAnimation").style.display = "block";
       launchConfetti();
-    }
+    }, 2000);
+  }
 
-    function launchConfetti() {
-      const confetti = document.getElementById("confetti");
-      confetti.innerHTML = "";
-      const emojis = ["✨", "🌸", "🧡", "🌞"];
-      for (let i = 0; i < 40; i++) {
-        const el = document.createElement("div");
-        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        el.style.position = "absolute";
-        el.style.top = "-10px";
-        el.style.left = Math.random() * 100 + "vw";
-        el.style.fontSize = "24px";
-        el.style.animation = `fall ${2 + Math.random()}s ease-out forwards`;
-        confetti.appendChild(el);
-        setTimeout(() => el.remove(), 4000);
-      }
+  function launchConfetti() {
+    const confetti = document.getElementById("confetti");
+    confetti.innerHTML = '';
+    const emojis = ["✨", "🌸", "🧡", "🌞"];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement("div");
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.position = "absolute";
+      el.style.top = "-10px";
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.fontSize = "24px";
+      el.style.animation = `fall ${2 + Math.random()}s ease-out forwards`;
+      confetti.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
     }
-  </script>
+  }
+
+  function takeScreenshot() {
+    html2canvas(document.querySelector(".card")).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "drawly-gewinner.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+</script>
+
 </body>
 </html>
