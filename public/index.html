@@ -3,211 +3,207 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Drawly – Social Giveaway</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+  <title>Drawly – Giveaway Picker</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --beige: #fdf6f0;
+      --sand: #e8dcd1;
+      --text: #5b3e31;
+      --accent: #c8a989;
+      --accent-hover: #b88e70;
+    }
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: #fdf6f0;
-      color: #5b3e31;
+      background: var(--beige);
+      color: var(--text);
       text-align: center;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    .background-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      animation: float 12s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    .c1 { width: 300px; height: 300px; background: var(--sand); top: 5%; left: 5%; }
+    .c2 { width: 180px; height: 180px; background: var(--sand); top: 60%; left: 70%; }
+    .c3 { width: 100px; height: 100px; background: var(--sand); top: 40%; left: 30%; }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(20px); }
+    }
+
     header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
       font-family: 'Playfair Display', serif;
-      font-size: 2em;
-      padding: 20px;
-      color: #a97c50;
+      font-size: 1.5rem;
     }
-    section {
+    nav a {
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      padding: 3rem 2rem;
       max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      display: none;
+      margin: 3rem auto;
+      position: relative;
+      z-index: 1;
     }
-    section.active {
-      display: block;
-      animation: fadeIn 0.6s ease-in-out;
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #7a6b60;
+      margin-bottom: 2rem;
     }
-    input, button {
-      padding: 12px;
-      border-radius: 8px;
+
+    input {
+      padding: 0.9rem;
+      width: 60%;
+      border-radius: 50px;
       border: 1px solid #ccc;
-      margin: 10px 0;
-      width: 80%;
-      max-width: 400px;
-      font-family: inherit;
+      font-size: 1rem;
+      margin-right: 10px;
     }
+
     button {
-      background: linear-gradient(90deg, #c19a6b, #d8b89c);
+      padding: 0.9rem 1.5rem;
+      border-radius: 50px;
+      background: var(--accent);
       color: white;
-      font-weight: bold;
+      border: none;
+      font-weight: 600;
       cursor: pointer;
+      font-size: 1rem;
     }
     button:hover {
-      background: linear-gradient(90deg, #b3865a, #cfa88c);
+      background: var(--accent-hover);
     }
-    .box {
-      background: #fffaf6;
-      border: 1px solid #e6dcd5;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      padding: 20px;
-      margin: 20px auto;
-      text-align: left;
+
+    .languages {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+      gap: 1rem;
     }
+
+    .languages img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
     #drawly-result {
-      font-size: 1.5em;
-      margin-top: 30px;
-    }
-    #screenshot-btn {
-      display: none;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-<header>Drawly</header>
-
-<section id="screen1" class="active">
-  <h2>Starte dein Gewinnspiel</h2>
-  <input type="text" id="linkInput" placeholder="Post-Link einfügen..." />
-  <br><button onclick="goToScreen2()">Weiter</button>
-</section>
-
-<section id="screen2">
-  <h2>Vorschau</h2>
-  <div class="box">
-    <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" width="100%" style="border-radius: 10px;" />
-    <p>Likes: 500</p>
-    <p>Kommentare: 134</p>
-  </div>
-  <button onclick="goToScreen3()">Kriterien festlegen</button>
-</section>
-
-<section id="screen3">
-  <h2>Kriterien</h2>
-  <div class="box">
-    <label><input type="checkbox" id="requireHashtag"> Hashtag erforderlich</label><br>
-    <input type="text" id="hashtagInput" placeholder="#BohoGiveaway" style="width:100%"><br><br>
-    <label><input type="checkbox" id="requireMention"> Freunde markieren</label><br>
-    <input type="number" id="mentionCount" value="1" min="1" style="width:80px"><br><br>
-    <label><input type="checkbox" id="requireFollow"> Muss folgen</label><br><br>
-    <label>Anzahl Gewinner:</label><br>
-    <input type="number" id="winnerCount" value="1" min="1" max="10" style="width:80px">
-  </div>
-  <button onclick="startDraw()">Auslosung starten</button>
-</section>
-
-<section id="screen4">
-  <h2>Ziehung läuft...</h2>
-  <div id="drawly-result">...</div>
-  <button id="screenshot-btn" onclick="takeScreenshot()">Als Bild speichern</button>
-</section>
-<script>
-  const comments = [
-    { user: "@sunlover", text: "#BohoGiveaway ist mein Ding!", mentions: 2, follows: true },
-    { user: "@moonbeam", text: "Ich mach mit! #vibes", mentions: 1, follows: false },
-    { user: "@drawlyfan", text: "Hier bin ich! #BohoGiveaway", mentions: 3, follows: true }
-  ];
-
-  function goToScreen2() {
-    const input = document.getElementById("linkInput").value;
-    if (!input) return alert("Bitte Link eingeben.");
-    switchScreen("screen2");
-  }
-
-  function goToScreen3() {
-    switchScreen("screen3");
-  }
-
-  function switchScreen(id) {
-    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
-
-  function startDraw() {
-    switchScreen("screen4");
-    document.getElementById("screenshot-btn").style.display = "none";
-    const result = document.getElementById("drawly-result");
-
-    const requireHashtag = document.getElementById("requireHashtag").checked;
-    const hashtag = document.getElementById("hashtagInput").value.trim().toLowerCase();
-    const requireMention = document.getElementById("requireMention").checked;
-    const minMentions = parseInt(document.getElementById("mentionCount").value, 10);
-    const requireFollow = document.getElementById("requireFollow").checked;
-    const winnerCount = parseInt(document.getElementById("winnerCount").value, 10);
-
-    const valid = comments.filter(c => {
-      const tagOK = !requireHashtag || (hashtag && c.text.toLowerCase().includes(hashtag));
-      const mentionOK = !requireMention || c.mentions >= minMentions;
-      const followOK = !requireFollow || c.follows === true;
-      return tagOK && mentionOK && followOK;
-    });
-
-    if (valid.length === 0) {
-      result.innerHTML = "<div style='color:red;'>Keine gültigen Teilnehmer gefunden.</div>";
-      return;
+      margin-top: 2rem;
+      font-size: 1.5rem;
     }
 
-    let i = 0;
-    const names = valid.map(c => c.user);
-    const interval = setInterval(() => {
-      result.textContent = names[i % names.length];
-      i++;
-    }, 100);
-
-    setTimeout(() => {
-      clearInterval(interval);
-      const winners = [];
-      while (winners.length < winnerCount && names.length > 0) {
-        const idx = Math.floor(Math.random() * names.length);
-        winners.push(names.splice(idx, 1)[0]);
-      }
-      result.innerHTML = `<div class='box'><h3>Gewinner:</h3><p>${winners.join("<br>")}</p></div>`;
-      document.getElementById("screenshot-btn").style.display = "inline-block";
-      launchConfetti();
-    }, 3000);
-  }
-
-  function launchConfetti() {
-    for (let i = 0; i < 30; i++) {
-      const c = document.createElement("div");
-      c.textContent = "🎉";
-      c.style.position = "fixed";
-      c.style.left = Math.random() * 100 + "vw";
-      c.style.top = "-10px";
-      c.style.fontSize = "24px";
-      c.style.animation = `fall ${2 + Math.random()}s linear forwards`;
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 4000);
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
     }
-  }
 
-  function takeScreenshot() {
-    html2canvas(document.getElementById("screen4")).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "drawly-gewinner.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  }
-
-  const style = document.createElement("style");
-  style.textContent = `
     @keyframes fall {
       to {
         transform: translateY(100vh) rotate(720deg);
         opacity: 0;
       }
     }
-  `;
-  document.head.appendChild(style);
-</script>
+  </style>
+</head>
+<body>
+
+  <!-- Hintergrundkreise -->
+  <div class="background-circle c1"></div>
+  <div class="background-circle c2"></div>
+  <div class="background-circle c3"></div>
+
+  <header>
+    <div style="font-weight: bold;">Drawly</div>
+    <nav>
+      <a href="#">Login</a>
+      <a href="#">Modules</a>
+      <a href="#">Pricing</a>
+      <a href="#">Impressum</a>
+    </nav>
+  </header>
+
+  <div class="card">
+    <h1>Online Giveaway Picker</h1>
+    <div class="subtitle">Randomly select winners from your social media giveaways</div>
+    <div>
+      <input type="text" id="linkInput" placeholder="Enter a post URL..." />
+      <button onclick="drawWinner()">Select Winner</button>
+    </div>
+    <div id="drawly-result"></div>
+  </div>
+
+  <div class="languages">
+    <img src="https://flagcdn.com/w40/de.png" alt="Deutsch">
+    <img src="https://flagcdn.com/w40/us.png" alt="English">
+    <img src="https://flagcdn.com/w40/es.png" alt="Spanish">
+    <img src="https://flagcdn.com/w40/fr.png" alt="French">
+    <img src="https://flagcdn.com/w40/it.png" alt="Italian">
+    <img src="https://flagcdn.com/w40/tr.png" alt="Turkish">
+    <img src="https://flagcdn.com/w40/ru.png" alt="Russian">
+    <img src="https://flagcdn.com/w40/cn.png" alt="Chinese">
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    function drawWinner() {
+      const result = document.getElementById("drawly-result");
+      result.textContent = "🎉 Congratulations @sunlover!";
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const confetti = document.getElementById("confetti");
+      confetti.innerHTML = "";
+      const emojis = ["✨", "🌸", "🧡", "🌞"];
+      for (let i = 0; i < 40; i++) {
+        const el = document.createElement("div");
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.position = "absolute";
+        el.style.top = "-10px";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.fontSize = "24px";
+        el.style.animation = `fall ${2 + Math.random()}s ease-out forwards`;
+        confetti.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+      }
+    }
+  </script>
 </body>
 </html>
