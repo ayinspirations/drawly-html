@@ -3,211 +3,199 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Drawly – Social Giveaway</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <title>Drawly – Social Giveaway Picker</title>
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fefaf6;
+      color: #3d3d3d;
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #fdf6f0;
-      color: #5b3e31;
-      text-align: center;
     }
-    header {
-      font-family: 'Playfair Display', serif;
-      font-size: 2em;
-      padding: 20px;
-      color: #a97c50;
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #f9eee6;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    section {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      display: none;
-    }
-    section.active {
-      display: block;
-      animation: fadeIn 0.6s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    input, button {
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 10px 0;
-      width: 80%;
-      max-width: 400px;
-      font-family: inherit;
-    }
-    button {
-      background: linear-gradient(90deg, #c19a6b, #d8b89c);
-      color: white;
-      font-weight: bold;
+    nav img {
+      height: 40px;
       cursor: pointer;
     }
-    button:hover {
-      background: linear-gradient(90deg, #b3865a, #cfa88c);
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
     }
-    .box {
-      background: #fffaf6;
-      border: 1px solid #e6dcd5;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      padding: 20px;
-      margin: 20px auto;
-      text-align: left;
+    nav ul li a {
+      text-decoration: none;
+      color: #3d3d3d;
+      font-weight: 500;
     }
-    #drawly-result {
-      font-size: 1.5em;
-      margin-top: 30px;
-    }
-    #screenshot-btn {
+    .screen {
       display: none;
-      margin-top: 20px;
+      padding: 2rem;
+    }
+    .screen.active {
+      display: block;
+    }
+    input, button, select {
+      padding: 0.8rem;
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 400px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    h1, h2 {
+      font-family: 'Georgia', serif;
+    }
+    .language-switch {
+      margin-left: auto;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
-<header>Drawly</header>
 
-<section id="screen1" class="active">
-  <h2>Starte dein Gewinnspiel</h2>
-  <input type="text" id="linkInput" placeholder="Post-Link einfügen..." />
-  <br><button onclick="goToScreen2()">Weiter</button>
-</section>
+  <nav>
+    <img src="logo.png" alt="Drawly Logo" onclick="goHome()" />
+    <ul>
+      <li><a href="#">Login</a></li>
+      <li><a href="#">Modules</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">Impressum</a></li>
+    </ul>
+    <select id="languageSelector" onchange="changeLanguage(this.value)" class="language-switch">
+      <option value="de">Deutsch</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="it">Italiano</option>
+      <option value="tr">Türkçe</option>
+      <option value="ru">Русский</option>
+      <option value="zh">中文</option>
+    </select>
+  </nav>
 
-<section id="screen2">
-  <h2>Vorschau</h2>
-  <div class="box">
-    <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" width="100%" style="border-radius: 10px;" />
-    <p>Likes: 500</p>
-    <p>Kommentare: 134</p>
-  </div>
-  <button onclick="goToScreen3()">Kriterien festlegen</button>
-</section>
+  <section id="screen1" class="screen active">
+    <h1>Drawly</h1>
+    <p id="intro">Starte deine faire Auslosung – in Boho-Ästhetik</p>
+    <input type="url" id="postLink" placeholder="Beitragslink einfügen…" />
+    <button onclick="goToPreview()">Weiter zur Vorschau</button>
+  </section>
 
-<section id="screen3">
-  <h2>Kriterien</h2>
-  <div class="box">
-    <label><input type="checkbox" id="requireHashtag"> Hashtag erforderlich</label><br>
-    <input type="text" id="hashtagInput" placeholder="#BohoGiveaway" style="width:100%"><br><br>
-    <label><input type="checkbox" id="requireMention"> Freunde markieren</label><br>
-    <input type="number" id="mentionCount" value="1" min="1" style="width:80px"><br><br>
-    <label><input type="checkbox" id="requireFollow"> Muss folgen</label><br><br>
-    <label>Anzahl Gewinner:</label><br>
-    <input type="number" id="winnerCount" value="1" min="1" max="10" style="width:80px">
-  </div>
-  <button onclick="startDraw()">Auslosung starten</button>
-</section>
+  <section id="screen2" class="screen">
+    <h2>Vorschau</h2>
+    <div id="previewArea">[Vorschau des Beitrags]</div>
+    <button onclick="goToCriteria()">Kriterien auswählen</button>
+  </section>
 
-<section id="screen4">
-  <h2>Ziehung läuft...</h2>
-  <div id="drawly-result">...</div>
-  <button id="screenshot-btn" onclick="takeScreenshot()">Als Bild speichern</button>
-</section>
-<script>
-  const comments = [
-    { user: "@sunlover", text: "#BohoGiveaway ist mein Ding!", mentions: 2, follows: true },
-    { user: "@moonbeam", text: "Ich mach mit! #vibes", mentions: 1, follows: false },
-    { user: "@drawlyfan", text: "Hier bin ich! #BohoGiveaway", mentions: 3, follows: true }
-  ];
+  <section id="screen3" class="screen">
+    <h2>Kriterien</h2>
+    <label><input type="checkbox" id="hashtag" /> Muss Hashtag enthalten</label><br/>
+    <label><input type="checkbox" id="mention" /> Muss jemanden markieren</label><br/>
+    <label><input type="checkbox" id="follow" /> Muss dir folgen</label><br/>
+    <label><input type="checkbox" id="like" /> Muss Beitrag liken</label><br/>
+    <label><input type="checkbox" id="extraEntry" /> Extra-Los bei Story-Sharing</label><br/>
+    <button onclick="startDraw()">Auslosen</button>
+  </section>
 
-  function goToScreen2() {
-    const input = document.getElementById("linkInput").value;
-    if (!input) return alert("Bitte Link eingeben.");
-    switchScreen("screen2");
-  }
+  <section id="screen4" class="screen">
+    <h2 id="winnerTitle">And the winner is…</h2>
+    <div id="winnerDisplay">[Name wird hier erscheinen]</div>
+    <button onclick="takeScreenshot()">Screenshot speichern</button>
+  </section>
 
-  function goToScreen3() {
-    switchScreen("screen3");
-  }
+  <script>
+    const screens = ["screen1", "screen2", "screen3", "screen4"];
+    const translations = {
+      de: { intro: "Starte deine faire Auslosung – in Boho-Ästhetik", linkPlaceholder: "Beitragslink einfügen…", previewButton: "Weiter zur Vorschau", criteriaTitle: "Kriterien", winnerTitle: "And the winner is…", screenshot: "Screenshot speichern" },
+      en: { intro: "Start your fair giveaway – in boho style", linkPlaceholder: "Insert post link...", previewButton: "Continue to preview", criteriaTitle: "Criteria", winnerTitle: "And the winner is…", screenshot: "Save screenshot" },
+      es: { intro: "Inicia tu sorteo justo – al estilo boho", linkPlaceholder: "Pega el enlace de la publicación…", previewButton: "Ver vista previa", criteriaTitle: "Criterios", winnerTitle: "Y el ganador es…", screenshot: "Guardar captura" },
+      fr: { intro: "Lancez votre tirage au sort équitable – style boho", linkPlaceholder: "Collez le lien du post…", previewButton: "Voir l’aperçu", criteriaTitle: "Critères", winnerTitle: "Et le gagnant est…", screenshot: "Enregistrer capture" },
+      it: { intro: "Avvia la tua estrazione – in stile boho", linkPlaceholder: "Inserisci il link del post…", previewButton: "Anteprima", criteriaTitle: "Criteri", winnerTitle: "E il vincitore è…", screenshot: "Salva screenshot" },
+      tr: { intro: "Adil çekilişini başlat – boho tarzında", linkPlaceholder: "Gönderi bağlantısını yapıştır…", previewButton: "Önizlemeye geç", criteriaTitle: "Kriterler", winnerTitle: "Ve kazanan…", screenshot: "Ekran görüntüsünü kaydet" },
+      ru: { intro: "Начни честный розыгрыш — в стиле бохо", linkPlaceholder: "Вставьте ссылку на пост…", previewButton: "К предпросмотру", criteriaTitle: "Критерии", winnerTitle: "И победитель…", screenshot: "Сохранить скриншот" },
+      zh: { intro: "开始你的公平抽奖 – Boho风格", linkPlaceholder: "粘贴帖子链接…", previewButton: "继续预览", criteriaTitle: "条件", winnerTitle: "获奖者是…", screenshot: "保存截图" }
+    };
 
-  function switchScreen(id) {
-    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
-
-  function startDraw() {
-    switchScreen("screen4");
-    document.getElementById("screenshot-btn").style.display = "none";
-    const result = document.getElementById("drawly-result");
-
-    const requireHashtag = document.getElementById("requireHashtag").checked;
-    const hashtag = document.getElementById("hashtagInput").value.trim().toLowerCase();
-    const requireMention = document.getElementById("requireMention").checked;
-    const minMentions = parseInt(document.getElementById("mentionCount").value, 10);
-    const requireFollow = document.getElementById("requireFollow").checked;
-    const winnerCount = parseInt(document.getElementById("winnerCount").value, 10);
-
-    const valid = comments.filter(c => {
-      const tagOK = !requireHashtag || (hashtag && c.text.toLowerCase().includes(hashtag));
-      const mentionOK = !requireMention || c.mentions >= minMentions;
-      const followOK = !requireFollow || c.follows === true;
-      return tagOK && mentionOK && followOK;
-    });
-
-    if (valid.length === 0) {
-      result.innerHTML = "<div style='color:red;'>Keine gültigen Teilnehmer gefunden.</div>";
-      return;
+    function showScreen(id) {
+      screens.forEach(s => document.getElementById(s).classList.remove("active"));
+      document.getElementById(id).classList.add("active");
     }
 
-    let i = 0;
-    const names = valid.map(c => c.user);
-    const interval = setInterval(() => {
-      result.textContent = names[i % names.length];
-      i++;
-    }, 100);
+    function goToPreview() { showScreen("screen2"); }
+    function goToCriteria() { showScreen("screen3"); }
+    function goHome() { showScreen("screen1"); }
 
-    setTimeout(() => {
-      clearInterval(interval);
-      const winners = [];
-      while (winners.length < winnerCount && names.length > 0) {
-        const idx = Math.floor(Math.random() * names.length);
-        winners.push(names.splice(idx, 1)[0]);
-      }
-      result.innerHTML = `<div class='box'><h3>Gewinner:</h3><p>${winners.join("<br>")}</p></div>`;
-      document.getElementById("screenshot-btn").style.display = "inline-block";
-      launchConfetti();
-    }, 3000);
-  }
-
-  function launchConfetti() {
-    for (let i = 0; i < 30; i++) {
-      const c = document.createElement("div");
-      c.textContent = "🎉";
-      c.style.position = "fixed";
-      c.style.left = Math.random() * 100 + "vw";
-      c.style.top = "-10px";
-      c.style.fontSize = "24px";
-      c.style.animation = `fall ${2 + Math.random()}s linear forwards`;
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 4000);
-    }
-  }
-
-  function takeScreenshot() {
-    html2canvas(document.getElementById("screen4")).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "drawly-gewinner.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  }
-
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes fall {
-      to {
-        transform: translateY(100vh) rotate(720deg);
-        opacity: 0;
+    function triggerConfetti() {
+      const emoji = ["✨", "🌸", "🌿", "🧡", "🌞"];
+      for (let i = 0; i < 30; i++) {
+        const el = document.createElement("div");
+        el.textContent = emoji[Math.floor(Math.random() * emoji.length)];
+        el.style.position = "fixed";
+        el.style.top = Math.random() * -20 + "px";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.fontSize = "24px";
+        el.style.animation = "fall 2s ease-out forwards";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
       }
     }
-  `;
-  document.head.appendChild(style);
-</script>
+
+    function takeScreenshot() {
+      html2canvas(document.getElementById("screen4")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "drawly-winner.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    function createVerificationHash(name, timestamp) {
+      return btoa(`${name}-${timestamp}`);
+    }
+
+    function startDraw() {
+      const dummyComments = ["@anna", "@max", "@sarah", "@leo", "@nina"];
+      const winner = dummyComments[Math.floor(Math.random() * dummyComments.length)];
+      const timestamp = new Date().toISOString();
+      const hash = createVerificationHash(winner, timestamp);
+      document.getElementById("winnerDisplay").innerHTML =
+        `<strong>${winner}</strong><br><small>Zeitstempel: ${timestamp}</small><br><small>Verifizierungscode: ${hash}</small>`;
+      showScreen("screen4");
+      triggerConfetti();
+    }
+
+    function changeLanguage(lang) {
+      const t = translations[lang];
+      document.getElementById("intro").textContent = t.intro;
+      document.getElementById("postLink").placeholder = t.linkPlaceholder;
+      document.querySelector("#screen1 button").textContent = t.previewButton;
+      document.querySelector("#screen3 h2").textContent = t.criteriaTitle;
+      document.getElementById("winnerTitle").text 
+          = t.winnerTitle;
+      document.querySelector("#screen4 button").textContent = t.screenshot;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const browserLang = navigator.language.slice(0, 2);
+      const defaultLang = translations[browserLang] ? browserLang : "en";
+      changeLanguage(defaultLang);
+      document.getElementById("languageSelector").value = defaultLang;
+    });
+  </script>
 </body>
 </html>
