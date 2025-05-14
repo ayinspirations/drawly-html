@@ -30,13 +30,24 @@
       color: var(--text);
     }
 
-    .card {
+    .screen {
+      display: none;
+      max-width: 600px;
+      margin: 2rem auto;
       background: white;
       border-radius: 20px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.05);
       padding: 2rem;
-      max-width: 600px;
-      margin: 2rem auto;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     input, button {
@@ -64,24 +75,14 @@
 
     #postPreview img {
       width: 100%;
-      max-width: 400px;
       border-radius: 12px;
       margin-top: 1rem;
-    }
-
-    #criteriaBox {
-      margin-top: 1.5rem;
-      text-align: left;
     }
 
     #criteriaBox label {
       display: block;
       margin: 0.5rem 0;
-    }
-
-    #drawly-result {
-      margin-top: 2rem;
-      font-size: 1.4rem;
+      text-align: left;
     }
 
     #winnerAnimation {
@@ -115,19 +116,28 @@
 
 <header>Drawly</header>
 
-<div class="card">
+<!-- Screen 1: Link-Eingabe -->
+<div id="screen1" class="screen active">
   <h2>Instagram-Link eingeben</h2>
   <input type="text" id="postLink" placeholder="Post-Link hier einfügen..." />
   <button onclick="showPreview()">Vorschau anzeigen</button>
+</div>
 
-  <div id="postPreview" style="display:none;">
+<!-- Screen 2: Vorschau -->
+<div id="screen2" class="screen">
+  <h2>Vorschau</h2>
+  <div id="postPreview">
     <img src="https://via.placeholder.com/500x300.png?text=Post+Vorschau" alt="Vorschau">
     <p id="likes">Likes: 123</p>
     <p id="comments">Kommentare: 45</p>
-    <button onclick="showCriteria()">Kriterien festlegen</button>
   </div>
+  <button onclick="showScreen('screen3')">Kriterien festlegen</button>
+</div>
 
-  <div id="criteriaBox" style="display:none;">
+<!-- Screen 3: Kriterien -->
+<div id="screen3" class="screen">
+  <h2>Kriterien auswählen</h2>
+  <div id="criteriaBox">
     <label><input type="checkbox" id="requireHashtag"> Hashtag erforderlich</label>
     <input type="text" id="hashtagInput" placeholder="#Giveaway"><br>
 
@@ -141,9 +151,11 @@
 
     <button onclick="startDraw()">Gewinner festlegen</button>
   </div>
+</div>
 
-  <div id="drawly-result"></div>
-
+<!-- Screen 4: Gewinneranzeige -->
+<div id="screen4" class="screen">
+  <h2>Auslosung läuft…</h2>
   <div id="winnerAnimation">
     <img src="https://i.pravatar.cc/100?u=winner" alt="Profilbild">
     <h3>🎉 Glückwunsch @sunlover!</h3>
@@ -154,21 +166,20 @@
 <div class="confetti" id="confetti"></div>
 
 <script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
   function showPreview() {
     const link = document.getElementById("postLink").value.trim();
     if (!link) return alert("Bitte einen Link eingeben.");
-    document.getElementById("postPreview").style.display = "block";
-  }
-
-  function showCriteria() {
-    document.getElementById("criteriaBox").style.display = "block";
+    showScreen("screen2");
   }
 
   function startDraw() {
-    const result = document.getElementById("drawly-result");
-    result.textContent = "Ziehung läuft...";
+    showScreen("screen4");
     setTimeout(() => {
-      result.textContent = "";
       document.getElementById("winnerAnimation").style.display = "block";
       launchConfetti();
     }, 2000);
@@ -192,7 +203,7 @@
   }
 
   function takeScreenshot() {
-    html2canvas(document.querySelector(".card")).then(canvas => {
+    html2canvas(document.getElementById("screen4")).then(canvas => {
       const link = document.createElement("a");
       link.download = "drawly-gewinner.png";
       link.href = canvas.toDataURL();
