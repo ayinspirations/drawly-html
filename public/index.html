@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet" />
   <script src="https://js.stripe.com/v3/"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
   <style>
     :root {
       --bg: #f5f0e6;
@@ -88,18 +87,18 @@
       flex-direction: column;
       align-items: center;
     }
-
-    nav#navMenu {
+        nav#navMenu {
       display: none;
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      background: rgba(232, 220, 209, 0.9);
+      background: rgba(232, 220, 209, 0.95);
       padding: 1.5rem;
       border-radius: 20px;
       box-shadow: 0 6px 12px rgba(0,0,0,0.05);
       margin: 0 2rem;
       font-family: 'Playfair Display', serif;
+      animation: slideFadeIn 0.4s ease forwards;
     }
 
     nav#navMenu a {
@@ -150,10 +149,23 @@
     #burger.open .bar:nth-child(3) {
       transform: rotate(-45deg) translate(6px, -6px);
     }
+
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      h2 { font-size: 1.4rem; }
+      .criteria-card, .kpi-card {
+        width: 90%;
+        padding: 1rem 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <header style="display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem;">
+    <header style="display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem;">
     <div onclick="showScreen('screen1')" style="cursor:pointer; font-family:'Playfair Display'; font-size:1.8rem; color:var(--text);">
       Drawly
     </div>
@@ -172,18 +184,18 @@
     <a href="#" onclick="openLoginModal()">Login</a>
   </nav>
 
-  <!-- Hinweis -->
   <div style="background: #fff3c7; color: #5b3e31; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); max-width: 600px; margin: 1rem auto; text-align:center;">
     <strong>Hinweis:</strong> Du befindest dich im <em>Demo-Modus</em>. Alle Funktionen sind freigeschaltet.
   </div>
 
-  <!-- Screen 1: Start -->
+  <!-- Screen 1 -->
   <div id="screen1" class="screen active">
     <h2>Gewinnspiel starten</h2>
     <input type="text" id="postLink" placeholder="Link zum Post eingeben" />
     <button onclick="handlePostLink()">Weiter</button>
   </div>
-    <!-- Screen 2: Vorschau -->
+
+  <!-- Screen 2: Vorschau -->
   <div id="screen2" class="screen">
     <h2>Vorschau</h2>
     <div id="platformInfo" style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:1rem;">
@@ -194,40 +206,44 @@
     <img src="https://via.placeholder.com/500x300.png?text=Vorschau" style="width:100%; border-radius:10px;" />
     <button onclick="showScreen('screen3')">Kriterien festlegen</button>
   </div>
-
-  <!-- Screen 3: Kriterien -->
+    <!-- Screen 3: Kriterien -->
   <div id="screen3" class="screen">
     <h2>Kriterien festlegen</h2>
     <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
 
+      <!-- Hashtag -->
       <div class="criteria-card">
-        <h3># Hashtag</h3>
-        <p>Teilnehmer:innen müssen diesen Hashtag verwenden:</p>
+        <h3 style="margin-bottom: 0.5rem;"># Hashtag</h3>
+        <p style="margin: 0 0 0.5rem;">Teilnehmer:innen müssen diesen Hashtag verwenden:</p>
         <input type="text" id="hashtagInput" placeholder="#drawly" style="text-align:center;" />
       </div>
 
+      <!-- Freunde markieren -->
       <div class="criteria-card">
-        <h3>👥 Freunde markieren</h3>
-        <p>Wie viele Personen sollen mindestens markiert werden?</p>
+        <h3 style="margin-bottom: 0.5rem;">👥 Freunde markieren</h3>
+        <p style="margin: 0 0 0.5rem;">Wie viele Personen sollen mindestens markiert werden?</p>
         <input type="number" id="mentionCount" min="1" max="10" value="1" />
       </div>
 
+      <!-- Folgen -->
       <div class="criteria-card">
-        <h3>✅ Folgen</h3>
-        <p>Folgende Accounts müssen gefolgt werden:</p>
+        <h3 style="margin-bottom: 0.5rem;">✅ Folgen</h3>
+        <p style="margin: 0 0 0.5rem;">Folgende Accounts müssen gefolgt werden:</p>
         <input type="text" id="follow1" placeholder="@drawly" />
         <input type="text" id="follow2" placeholder="@zweiterAccount (optional)" />
         <input type="text" id="follow3" placeholder="@dritterAccount (optional)" />
       </div>
 
+      <!-- Like erforderlich -->
       <div class="criteria-card" style="flex-direction: row; align-items: center; justify-content: center;">
         <input type="checkbox" id="requireLike" style="margin-right: 10px;" />
         <label for="requireLike">Beitrag muss geliked sein</label>
       </div>
 
+      <!-- Anzahl Gewinner -->
       <div class="criteria-card">
-        <h3>🎁 Gewinner:innen</h3>
-        <p>Wie viele Personen sollen ausgelost werden?</p>
+        <h3 style="margin-bottom: 0.5rem;">🎁 Gewinner:innen</h3>
+        <p style="margin: 0 0 0.5rem;">Wie viele Personen sollen ausgelost werden?</p>
         <input type="number" id="winnerCount" min="1" max="10" value="1" />
       </div>
 
@@ -235,8 +251,8 @@
     </div>
   </div>
 
-  <!-- Screen 4: Gewinneranzeige (kompakt & zentriert) -->
-  <div id="screen4" class="screen" style="display:none;">
+  <!-- Screen 4: Gewinner -->
+  <div id="screen4" class="screen">
     <h2>Gewinner</h2>
 
     <!-- Countdown -->
@@ -244,19 +260,11 @@
 
     <!-- Podest -->
     <div id="winnersList" style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;"></div>
-
-    <!-- QR-Code für Ziehungsprotokoll -->
-    <div id="qrCodeContainer" style="display:none; text-align:center; margin-top:2rem;">
-      <h3 style="margin-bottom:0.5rem;">Ziehungsprotokoll (verifizierbar)</h3>
-      <div id="qrcode" style="margin: 0 auto;"></div>
-    </div>
   </div>
-
-  <!-- Aktionen unterhalb von screen4 -->
+    <!-- Aktionen unterhalb von screen4 -->
   <div style="display:flex; flex-direction:column; align-items:center; gap:1rem; margin-top:1rem; padding:1rem;">
     <div id="screenshotBox" style="display:none;">
       <button onclick="takeScreenshot()">Screenshot speichern</button>
-      <button onclick="takeStoryScreenshot()">Story-Version speichern</button>
     </div>
     <div id="protocolArea" style="display:none;">
       <button onclick="downloadDrawProtocol()">Ziehungsprotokoll herunterladen</button>
@@ -265,7 +273,8 @@
       <button onclick="exportCommentsToCSV()">Teilnehmerliste als CSV exportieren</button>
     </div>
   </div>
-    <!-- Preise -->
+
+  <!-- Preise -->
   <div id="pricing" class="screen">
     <h2>Preise</h2>
     <h3>Monatliche Abos</h3>
@@ -309,8 +318,7 @@
       </div>
     </div>
   </div>
-
-  <!-- Dashboard -->
+    <!-- Dashboard -->
   <div id="dashboard" class="screen">
     <h2>Dein Bereich</h2>
     <p><strong>Plan:</strong> <span id="subscriptionStatus">free</span></p>
@@ -341,251 +349,231 @@
     <button onclick="showScreen('pricing')">Abo abschließen</button><br/><br/>
     <button onclick="closePremiumModal()">Abbrechen</button>
   </div>
+
   <script>
-  function showScreen(id) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    window.scrollTo(0, 0);
-  }
-
-  function toggleMenu() {
-    const burger = document.getElementById("burger");
-    const nav = document.getElementById("navMenu");
-    burger.classList.toggle("open");
-    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
-  }
-
-  function handlePostLink() {
-    const link = document.getElementById("postLink").value;
-    let platform = "";
-    if (link.includes("instagram")) platform = "Instagram";
-    else if (link.includes("facebook")) platform = "Facebook";
-    else if (link.includes("youtube")) platform = "YouTube";
-    else if (link.includes("tiktok")) platform = "TikTok";
-    else platform = "Unbekannt";
-    document.getElementById("platformText").textContent = platform;
-    const iconMap = {
-      "Instagram": "https://cdn-icons-png.flaticon.com/512/2111/2111463.png",
-      "Facebook": "https://cdn-icons-png.flaticon.com/512/733/733547.png",
-      "YouTube": "https://cdn-icons-png.flaticon.com/512/1384/1384060.png",
-      "TikTok": "https://cdn-icons-png.flaticon.com/512/3046/3046121.png",
-      "Unbekannt": "https://cdn-icons-png.flaticon.com/512/565/565547.png"
-    };
-    document.getElementById("platformIcon").src = iconMap[platform];
-    showScreen("screen2");
-  }
-
-  const comments = Array.from({ length: 200 }, (_, i) => ({
-    user: `@user${i + 1}`,
-    text: `Kommentar ${i + 1}`,
-    profilePic: `https://i.pravatar.cc/100?u=${i}`
-  }));
-
-  function startDraw() {
-    showScreen("screen4");
-    document.getElementById("winnersList").innerHTML = "";
-    document.getElementById("countdownBox").textContent = "";
-    document.getElementById("exportArea").style.display = "none";
-    document.getElementById("protocolArea").style.display = "none";
-    document.getElementById("screenshotBox").style.display = "none";
-    document.getElementById("qrCodeContainer").style.display = "none";
-
-    const winnerCount = parseInt(document.getElementById("winnerCount").value) || 1;
-    let count = 3;
-    const countdown = document.getElementById("countdownBox");
-    countdown.textContent = count;
-
-    const interval = setInterval(() => {
-      count--;
-      if (count > 0) {
-        countdown.textContent = count;
-      } else {
-        clearInterval(interval);
-        countdown.textContent = "";
-        const shuffled = comments.sort(() => 0.5 - Math.random());
-        const winners = shuffled.slice(0, winnerCount);
-        window.lastDrawWinners = winners;
-        showWinners(winners);
-        launchConfetti();
-        document.getElementById("exportArea").style.display = "block";
-        document.getElementById("protocolArea").style.display = "block";
-        document.getElementById("screenshotBox").style.display = "block";
-        generateQRCode("https://drawly.io/protokoll/DRAWLY-" + Date.now());
+    // Navigation
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      const burger = document.getElementById('burger');
+      const nav = document.getElementById('navMenu');
+      if (nav.style.display === 'flex') {
+        nav.style.display = 'none';
+        burger.classList.remove('open');
       }
-    }, 1000);
-  }
-
-  function showWinners(winners) {
-    const container = document.getElementById("winnersList");
-    container.innerHTML = "";
-    winners.forEach((winner, index) => {
-      const div = document.createElement("div");
-      div.style.display = "flex";
-      div.style.flexDirection = "column";
-      div.style.alignItems = "center";
-      div.style.justifyContent = "flex-end";
-      div.style.width = "100px";
-      div.style.height = `${100 + (3 - index) * 20}px`;
-      div.style.background = "#e8dcd1";
-      div.style.borderRadius = "10px 10px 0 0";
-      div.style.margin = "0 5px";
-      div.style.padding = "10px";
-      div.style.transition = "opacity 0.6s ease";
-      div.style.opacity = 0;
-
-      const img = document.createElement("img");
-      img.src = winner.profilePic;
-      img.alt = winner.user;
-      img.style.width = "60px";
-      img.style.height = "60px";
-      img.style.borderRadius = "50%";
-      img.style.border = "3px solid #c8a989";
-      img.style.marginBottom = "10px";
-
-      const name = document.createElement("div");
-      name.textContent = winner.user;
-      name.style.fontWeight = "bold";
-
-      const place = document.createElement("div");
-      place.textContent = `${index + 1}. Platz`;
-      place.style.fontSize = "0.9rem";
-      place.style.color = "#5b3e31";
-
-      div.appendChild(img);
-      div.appendChild(name);
-      div.appendChild(place);
-      container.appendChild(div);
-
-      setTimeout(() => {
-        div.style.opacity = 1;
-      }, 1000 * index);
-    });
-  }
-
-  function launchConfetti() {
-    const emojis = ["✨", "🌸", "🧡", "🌞"];
-    for (let i = 0; i < 40; i++) {
-      const el = document.createElement("div");
-      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      el.style.position = "fixed";
-      el.style.top = "-10px";
-      el.style.left = Math.random() * 100 + "vw";
-      el.style.fontSize = "24px";
-      el.style.animation = `fall ${2 + Math.random()}s ease-out forwards`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 4000);
     }
-  }
 
-  function takeScreenshot() {
-    html2canvas(document.getElementById("screen4")).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "drawly-gewinner.png";
-      link.href = canvas.toDataURL();
+    function toggleMenu() {
+      const burger = document.getElementById('burger');
+      const nav = document.getElementById('navMenu');
+      burger.classList.toggle('open');
+      nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Plattform-Erkennung
+    function handlePostLink() {
+      const link = document.getElementById('postLink').value;
+      let platform = '';
+      if (link.includes('instagram.com')) platform = 'Instagram';
+      else if (link.includes('facebook.com')) platform = 'Facebook';
+      else if (link.includes('youtube.com')) platform = 'YouTube';
+      else if (link.includes('tiktok.com')) platform = 'TikTok';
+      else platform = 'Unbekannt';
+      document.getElementById('platformText').textContent = platform;
+      const iconMap = {
+        'Instagram': 'https://cdn-icons-png.flaticon.com/512/2111/2111463.png',
+        'Facebook': 'https://cdn-icons-png.flaticon.com/512/733/733547.png',
+        'YouTube': 'https://cdn-icons-png.flaticon.com/512/1384/1384060.png',
+        'TikTok': 'https://cdn-icons-png.flaticon.com/512/3046/3046121.png',
+        'Unbekannt': 'https://cdn-icons-png.flaticon.com/512/565/565547.png'
+      };
+      document.getElementById('platformIcon').src = iconMap[platform];
+      showScreen('screen2');
+    }
+
+    // Dummy-Kommentare
+    const comments = Array.from({ length: 150 }, (_, i) => ({
+      user: `user${i + 1}`,
+      text: `Kommentar ${i + 1}`,
+      profilePic: `https://i.pravatar.cc/100?img=${(i % 70) + 1}`
+    }));
+
+    function startDraw() {
+      showScreen('screen4');
+      document.getElementById('winnersList').innerHTML = '';
+      document.getElementById('countdownBox').textContent = '';
+      document.getElementById('exportArea').style.display = 'none';
+      document.getElementById('protocolArea').style.display = 'none';
+      document.getElementById('screenshotBox').style.display = 'none';
+
+      const winnerCount = parseInt(document.getElementById('winnerCount').value) || 1;
+      const countdownBox = document.getElementById('countdownBox');
+      let count = 3;
+      countdownBox.textContent = count;
+      const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownBox.textContent = count;
+        } else {
+          clearInterval(countdownInterval);
+          countdownBox.textContent = '';
+          const shuffled = comments.sort(() => 0.5 - Math.random());
+          const winners = shuffled.slice(0, winnerCount);
+          window.lastDrawWinners = winners;
+          showWinners(winners);
+          launchConfetti();
+          document.getElementById('exportArea').style.display = 'block';
+          document.getElementById('protocolArea').style.display = 'block';
+          document.getElementById('screenshotBox').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    function showWinners(winners) {
+      const container = document.getElementById("winnersList");
+      container.innerHTML = '';
+      winners.forEach((winner, index) => {
+        const div = document.createElement("div");
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'flex-end';
+        div.style.width = '100px';
+        div.style.height = `${100 + (3 - index) * 20}px`;
+        div.style.background = '#e8dcd1';
+        div.style.borderRadius = '10px 10px 0 0';
+        div.style.margin = '0 5px';
+        div.style.padding = '10px';
+        div.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        div.style.opacity = 0;
+        div.style.transform = 'translateY(20px)';
+
+        const img = document.createElement("img");
+        img.src = winner.profilePic;
+        img.alt = winner.user;
+        img.style.width = '60px';
+        img.style.height = '60px';
+        img.style.borderRadius = '50%';
+        img.style.border = '3px solid #c8a989';
+        img.style.marginBottom = '10px';
+
+        const name = document.createElement("div");
+        name.textContent = winner.user;
+        name.style.fontWeight = 'bold';
+
+        const place = document.createElement("div");
+        place.textContent = `${index + 1}. Platz`;
+        place.style.fontSize = '0.9rem';
+        place.style.color = '#5b3e31';
+
+        div.appendChild(img);
+        div.appendChild(name);
+        div.appendChild(place);
+        container.appendChild(div);
+
+        setTimeout(() => {
+          div.style.opacity = 1;
+          div.style.transform = 'translateY(0)';
+        }, 500 * index);
+      });
+    }
+
+    function launchConfetti() {
+      const emojis = ['🎉', '✨', '🎊', '💫', '🌟'];
+      for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement('div');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.position = 'fixed';
+        emoji.style.top = '-50px';
+        emoji.style.left = `${Math.random() * 100}%`;
+        emoji.style.fontSize = `${Math.random() * 2 + 1}rem`;
+        emoji.style.zIndex = 9999;
+        emoji.style.animation = `fall ${2 + Math.random() * 2}s linear forwards`;
+        document.body.appendChild(emoji);
+        setTimeout(() => emoji.remove(), 4000);
+      }
+    }
+
+    function takeScreenshot() {
+      html2canvas(document.getElementById('screen4')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'gewinner.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    function exportCommentsToCSV() {
+      const rows = [['Benutzer', 'Kommentar']];
+      comments.forEach(c => rows.push([c.user, c.text]));
+      let csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'teilnehmerliste.csv');
+      document.body.appendChild(link);
       link.click();
-    });
-  }
+      document.body.removeChild(link);
+    }
 
-  function takeStoryScreenshot() {
-    html2canvas(document.getElementById("screen4"), {
-      width: 1080,
-      height: 1920,
-      scale: 2
-    }).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "drawly-story.png";
-      link.href = canvas.toDataURL();
+    function downloadDrawProtocol() {
+      const winners = window.lastDrawWinners || [];
+      const timestamp = new Date().toLocaleString();
+      const platform = document.getElementById('platformText').textContent || 'Unbekannt';
+      const criteria = [];
+      const hashtag = document.getElementById('hashtagInput').value;
+      if (hashtag) criteria.push(`Hashtag: ${hashtag}`);
+      const mentions = document.getElementById('mentionCount').value;
+      if (mentions) criteria.push(`Markierungen: mind. ${mentions}`);
+      const follows = [follow1.value, follow2.value, follow3.value].filter(f => f);
+      if (follows.length) criteria.push(`Follows: ${follows.join(', ')}`);
+      if (document.getElementById('requireLike').checked) criteria.push('Like erforderlich');
+      const protocol = `Drawly Ziehungsprotokoll\nDatum: ${timestamp}\nPlattform: ${platform}\nKriterien:\n- ${criteria.join('\n- ')}\nTeilnehmer: ${comments.length}\nGewinner:\n${winners.map((w, i) => `${i + 1}. ${w.user}`).join('\n')}\nZufalls-ID: DRAWLY-${Date.now()}`;
+      const blob = new Blob([protocol], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'ziehungsprotokoll.txt';
       link.click();
-    });
-  }
+    }
 
-  function exportCommentsToCSV() {
-    const csv = ["Benutzername,Kommentar"];
-    comments.forEach(c => csv.push(`${c.user},"${c.text}"`));
-    const blob = new Blob([csv.join("\n")], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "teilnehmerliste.csv";
-    link.click();
-  }
+    // Dummy-Funktionen
+    function startStripeCheckout(plan) {
+      alert(`Stripe Checkout für Plan: ${plan}`);
+    }
 
-  function downloadDrawProtocol() {
-    const winners = window.lastDrawWinners || [];
-    const criteria = [
-      "Hashtag: " + document.getElementById("hashtagInput").value,
-      "Markierungen: mind. " + document.getElementById("mentionCount").value,
-      "Follows: " + [1,2,3].map(i => document.getElementById("follow" + i).value).filter(Boolean).join(", "),
-      "Like: " + (document.getElementById("requireLike").checked ? "Ja" : "Nein")
-    ];
-    const txt = `Drawly Ziehungsprotokoll\nDatum: ${new Date().toLocaleString()}\nPlattform: ${document.getElementById("platformText").textContent}\nKriterien:\n${criteria.join("\n")}\nTeilnehmer: ${comments.length}\nGewinner:\n${winners.map((w,i)=>`${i+1}. ${w.user}`).join("\n")}`;
-    const blob = new Blob([txt], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "ziehungsprotokoll.txt";
-    link.click();
-  }
+    function startOneTimeCheckout(plan) {
+      alert(`Einmalzahlung für Plan: ${plan}`);
+    }
 
-  function generateQRCode(url) {
-    document.getElementById("qrCodeContainer").style.display = "block";
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
-      text: url,
-      width: 200,
-      height: 200,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  }
+    function openLoginModal() {
+      document.getElementById('loginModal').style.display = 'block';
+    }
 
-  function applyPromoCode(code) {
-    alert(code === "INFLU2024" ? "Promo-Code eingelöst!" : "Ungültiger Code.");
-  }
+    function closeLoginModal() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
 
-  function openLoginModal() {
-    document.getElementById("loginModal").style.display = "block";
-  }
+    function login() {
+      alert('Login erfolgreich');
+      closeLoginModal();
+    }
 
-  function closeLoginModal() {
-    document.getElementById("loginModal").style.display = "none";
-  }
+    function register() {
+      alert('Registrierung erfolgreich');
+      closeLoginModal();
+    }
 
-  function login() {
-    showScreen("dashboard");
-    closeLoginModal();
-  }
+    function logout() {
+      alert('Logout erfolgreich');
+    }
 
-  function register() {
-    alert("Registrierung abgeschlossen.");
-    login();
-  }
+    function applyPromoCode(code) {
+      alert(`Promo-Code ${code} angewendet`);
+    }
 
-  function logout() {
-    localStorage.clear();
-    showScreen("screen1");
-  }
-
-  function startStripeCheckout(plan) {
-    alert(`Abo ${plan} starten (Demo)`);
-  }
-
-  function startOneTimeCheckout(plan) {
-    alert(`Einmalzahlung ${plan} starten (Demo)`);
-  }
-
-  function closePremiumModal() {
-    document.getElementById("premiumModal").style.display = "none";
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    showScreen("screen1");
-    document.getElementById("winnersList").innerHTML = "";
-    document.getElementById("countdownBox").textContent = "";
-    document.getElementById("qrCodeContainer").style.display = "none";
-    document.getElementById("screenshotBox").style.display = "none";
-    document.getElementById("protocolArea").style.display = "none";
-    document.getElementById("exportArea").style.display = "none";
-  });
-</script>
+    function closePremiumModal() {
+      document.getElementById('premiumModal').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
